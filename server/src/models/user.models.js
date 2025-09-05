@@ -24,15 +24,22 @@ const userSchema = new Schema(
         },
         role: {
             type: String,
-            enum: ['farmer', 'vet', 'pharmacy', 'admin']
+            enum: ["farmer", "vet", "pharmacy", "admin"],
         },
         phone: {
-            type: String,
-            required: true,
+            code: {
+                type: String,
+                required: true,
+            },
+            mobileNo: {
+                type: Number,
+                required: true,
+            },
         },
         language: {
             type: String,
             required: true,
+            default: "en",
         },
         refreshToken: {
             type: String,

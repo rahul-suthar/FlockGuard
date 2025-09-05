@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+// import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 const options = {
@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, phone, role } = req.body;
 
     // data validations
-    if ([name, email, password, phone, role].some((field) => !field?.trim())) {
+    if (!phone && [name, email, password, role].some((field) => !field?.trim())) {
         throw new ApiError(400, "All fields are required");
     }
 
