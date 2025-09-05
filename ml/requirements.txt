@@ -1,0 +1,7 @@
+flask          #web framework for building the API
+flask-cors     #Enables Cross-Origin Resource Sharing (CORS) so that frontend can call API
+numpy          #numerical computations, arrays, and preprocessing
+pillow         #image processing
+scikit-learn   #ML algorithms (Logistic regression etc.) for dummy model
+joblib         #save/load trained ML models
+tensorflow     #deep learning framework for building and training models
