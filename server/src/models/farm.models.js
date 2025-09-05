@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import mongooseAggrigatePaginate from "mongoose-aggregate-paginate-v2";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const farmShcema = new Schema(
     {
@@ -8,16 +8,16 @@ const farmShcema = new Schema(
             ref: "User",
             required: true,
         },
-        farmType: {
+        name : {
+            type: String,
+            required: true,
+        },
+        type: {
             type: String,
             enum: ['pig', 'poultry'],
             required: true,
         },
-        farmSize: {
-            type: Number,
-            required: true,
-        },
-        animalsCount: {
+        size: {
             type: Number,
             required: true,
         },
@@ -29,6 +29,6 @@ const farmShcema = new Schema(
     { timestamps: true }
 );
 
-farmShcema.plugin(mongooseAggrigatePaginate);
+farmShcema.plugin(mongooseAggregatePaginate);
 
 export const Farm = mongoose.model("Farm", farmShcema);
