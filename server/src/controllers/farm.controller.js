@@ -3,8 +3,11 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Farm } from "../models/farm.models.js";
 
+// Admin / Global route
 const getAllFarms = asyncHandler(async (req, res) => {
     const { page, limit } = req.query;
+
+    if (req.user.role !== "admin") throw new ApiError(403, "Only admin can view all farms");
 
     const pageNum = parseInt(page, 10) || 1;
     const limitNum = parseInt(limit, 10) || 10;
@@ -22,6 +25,9 @@ const getAllFarms = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, farms, "farms fetched with pagination"));
 });
 
+// farmer-only routes
+
+// create farm
 const addFarm = asyncHandler(async (req, res) => {
     if (req.user.role !== "farmer") {
         throw new ApiError(403, "Only farmers can create farms");
@@ -54,6 +60,7 @@ const addFarm = asyncHandler(async (req, res) => {
         .json(new ApiResponse(201, farm, "Farm created successfully"));
 });
 
+// fetch their farms
 const getMyFarms = asyncHandler(async (req, res) => {
     if (req.user.role !== "farmer") {
         throw new ApiError(403, "Only farmers can view their farms");
@@ -64,8 +71,12 @@ const getMyFarms = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, farms, "Farms fetched"));
 });
 
+// fetch farm details
 const getFarmById = asyncHandler(async (req, res) => {
-    const farm = await Farm.findById(req.params.id).populate(
+    const farm = await Farm.findOne({
+        _id: req.params.id,
+        owner: req.user._id,
+    }).populate(
         "owner",
         "name email"
     );
@@ -82,28 +93,28 @@ const getFarmById = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, farm, "Farm fetched"));
 });
 
+// delete farm
 const deleteFarm = asyncHandler(async (req, res) => {
-    const farm = await Farm.findById(req.params.id);
-    if (!farm) throw new ApiError(404, "Farm not found");
+    const farm = await Farm.findOneAndDelete({
+        _id: req.params.id,
+        owner: req.user._id,
+    });
 
-    if (
-        farm.owner._id.toString() !== req.user._id.toString() &&
-        req.user.role !== "admin"
-    ) {
-        throw new ApiError(403, "You can't delete this farm");
-    }
-
-    await farm.deleteOne();
+    if (!farm) throw new ApiError(404, "farm not found");
 
     return res
         .status(200)
         .json(new ApiResponse(200, {}, "Farm deleted successfully"));
 });
 
+// update farm details
 const updateFarm = asyncHandler(async (req, res) => {
-    const { name, size } = req.body;
+    const { name, type, size, location } = req.body;
 
-    const farm = await Farm.findById(req.params.id);
+    const farm = await Farm.findOne({
+        _id: req.params.id,
+        owner: req.user._id,
+    });
 
     if (!farm) throw new ApiError(404, "Farm not found");
 
@@ -125,10 +136,13 @@ const updateFarm = asyncHandler(async (req, res) => {
                 "You already have farm with this name. Use different name."
             );
         }
+
+        farm.name = name;
     }
 
-    if (name) farm.name = name;
     if (size) farm.size = size;
+    if (location) farm.location = location;
+    if (type) farm.type = type;
 
     await farm.save();
 

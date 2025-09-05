@@ -14,11 +14,11 @@ app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+import { verifyJWT } from "./middlewares/auth.middleware.js";
 import userRouter from "./routes/user.routes.js";
 import farmRouter from "./routes/farm.routes.js";
-import { verifyJWT } from "./middlewares/auth.middleware.js";
 
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/farms", verifyJWT, farmRouter)
+app.use("/api/v1/farms", verifyJWT, farmRouter);
 
 export { app };
