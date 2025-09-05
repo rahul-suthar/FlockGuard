@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import mongooseAggrigatePaginate from "mongoose-aggregate-paginate-v2";
 
 const reportSchema = new Schema(
     {
@@ -7,7 +8,10 @@ const reportSchema = new Schema(
             ref: "Farm",
             required: true,
         },
-        imageUrl: String,
+        imageUrl: {
+            type: String,
+            required: true,
+        },
         aiResult: {
             disease: String,
             confidence: Number,
