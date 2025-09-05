@@ -2,8 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { mlResponse } from "../utils/mlRespose.js";
 import { Report } from "../models/report.models.js";
-import { Farm } from "../models/farm.models.js";
 import {Types} from "mongoose";
 
 // all reports of specific farms with pagination
@@ -57,11 +57,7 @@ const createReport = asyncHandler(async (req, res) => {
     const imgRes = await uploadOnCloudinary(symptomsImgLocalPath);
     const imageUrl = imgRes?.secure_url;
 
-    const aiResult = {
-        disease: "Avian Influenza",
-        confidence: 0.92,
-        recommendations: ["Isolate sick animals", "Call vet"],
-    };
+    const aiResult = await mlResponse(symptomsImgLocalPath);
 
     const report = await Report.create({
         farm: farmId,

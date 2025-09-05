@@ -1,34 +1,60 @@
+# =========================
 # Node.js dependencies
+# =========================
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Build output
+# =========================
+# Python / ML service
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.env.*
+*.sqlite3
+*.db
+*.egg-info/
 dist/
 build/
-coverage/
+*.log
 
+# =========================
+# Build / output
+# =========================
+coverage/
+dist/
+build/
+
+# =========================
 # OS files
+# =========================
 .DS_Store
 Thumbs.db
 
+# =========================
 # Logs
+# =========================
 logs/
 *.log
 
-# IDE files
+# =========================
+# IDE / editor files
+# =========================
 .vscode/
 .idea/
 *.sublime-workspace
 *.sublime-project
-
-# Misc
 *.swp
 *.bak
 *.tmp
+
+# =========================
+# ML / model files
+# =========================
+__pycache__/
+*.h5
+*.pt

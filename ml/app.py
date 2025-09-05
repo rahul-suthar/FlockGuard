@@ -1,6 +1,6 @@
 from flask import Flask
-from BioFarm.ml.routes.health import health_bp
-from BioFarm.ml.routes.predict import predict_bp
+from routes.health import health_bp
+from routes.predict import predict_bp
 
 app = Flask(__name__)
 

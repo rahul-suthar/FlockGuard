@@ -110,9 +110,14 @@ project-root/
 
 ### Reports
 
-- `POST /api/v1/reports` → upload image, trigger ML model, save report
+- `GET /api/v1/farms/:id/reports` → view all reports of farm
 
-- `GET /api/v1/reports/:id` → view report
+- `POST /api/v1/farms/:id/reports` → create new report (uploading image)
+
+- `GET /api/v1/farms/:id/reports/:rid` → get report details
+
+- `PATCH /api/v1/farms/:id/reports/:rid` → update report (only admin/vet/pharmacy)
+
 
 ### Alerts
 
