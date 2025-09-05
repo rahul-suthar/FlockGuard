@@ -96,9 +96,17 @@ project-root/
 
 ### Farms
 
-- `POST /api/v1/farms` → create farm profile
+- `GET /api/v1/farms/` → admin dashboard (details of all farms)
+
+- `GET /api/v1/farms/me` → get all farms of logged-in farmer
+
+- `POST /api/v1/farms/me` → Add a farm (farmer Only)
 
 - `GET /api/v1/farms/:id` → get farm details
+
+- `PUT /api/v1/farms/:id` → update farm details
+
+- `DELETE /api/v1/farms/:id` → delete farm
 
 ### Reports
 
