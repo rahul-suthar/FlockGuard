@@ -53,11 +53,17 @@ const createReport = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Image is required");
     }
     const symptomsImgLocalPath = symptomObj[0]?.path;
+    const aiRes = await mlResponse(symptomsImgLocalPath);
 
     const imgRes = await uploadOnCloudinary(symptomsImgLocalPath);
     const imageUrl = imgRes?.secure_url;
 
-    const aiResult = await mlResponse(symptomsImgLocalPath);
+
+    const aiResult = {
+        disease: aiRes.prediction,
+        confidence: Number(aiRes.confidence).toFixed(5),
+        recommendations: ['Call vet', 'Isolate sick animals']
+    }
 
     const report = await Report.create({
         farm: farmId,
