@@ -77,65 +77,15 @@ project-root/
 │   ├── middlewares/
 │   ├── utils/
 │── ml/
-│── docker-compose.yml
+│── docs/
 │── README.md
-
 ```
 
-## API Endpoints (Server)
+## 📖 Documentation
 
-### Auth
+- [API Endpoints](./docs/api.md) → All REST APIs with roles & permissions.  
+- [Workflow](./docs/WORKFLOW.md) → End-to-end demo flow + report lifecycle.  
 
-- `POST /api/v1/users/register`
-
-- `POST /api/v1/users/login`
-
-- `POST /api/v1/users/logout`
-
-- `POST /api/v1/users/refresh-token`
-
-### Farms
-
-- `GET /api/v1/farms/` → admin dashboard (details of all farms)
-
-- `GET /api/v1/farms/me` → get all farms of logged-in farmer
-
-- `POST /api/v1/farms/me` → Add a farm (farmer Only)
-
-- `GET /api/v1/farms/:id` → get farm details
-
-- `PUT /api/v1/farms/:id` → update farm details
-
-- `DELETE /api/v1/farms/:id` → delete farm
-
-### Reports
-
-- `GET /api/v1/farms/:id/reports` → view all reports of farm
-
-- `POST /api/v1/farms/:id/reports` → create new report (uploading image)
-
-- `GET /api/v1/farms/:id/reports/:rid` → get report details
-
-- `PATCH /api/v1/farms/:id/reports/:rid` → update report (only admin/vet/pharmacy)
-
-
-### Alerts
-
-- `POST /api/v1/alerts` → admin creates alert
-
-- `GET /api/v1/alerts` → farmers see alerts
-
-## Demo Flow (MVP)
-
-- **👨‍🌾 Farmer logs in** → creates farm profile.
-
-- **📸 Uploads sick animal image** → ML model predicts disease.
-
-- **📝 Report generated** → stored with prediction + suggested actions.
-
-- **🔔 Alerts** → farmer notified if outbreak is near.
-
-- **🏥 Optional** → farmer connects to vet/pharmacy.
 
 ## Future Scope
 
