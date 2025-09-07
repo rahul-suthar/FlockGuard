@@ -83,7 +83,7 @@ project-root/
 
 ## 📖 Documentation
 
-- [API Endpoints](./docs/api.md) → All REST APIs with roles & permissions.  
+- [API Endpoints](./docs/API.md) → All REST APIs with roles & permissions.  
 - [Workflow](./docs/WORKFLOW.md) → End-to-end demo flow + report lifecycle.  
 
 
