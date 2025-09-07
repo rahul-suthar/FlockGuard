@@ -7,14 +7,15 @@ import { Farm } from "../models/farm.models.js";
 const getAllFarms = asyncHandler(async (req, res) => {
     const { page, limit } = req.query;
 
-    if (req.user.role !== "admin") throw new ApiError(403, "Only admin can view all farms");
-
     const pageNum = parseInt(page, 10) || 1;
     const limitNum = parseInt(limit, 10) || 10;
 
+    const filter = {};
+    if (req.user.role === "farmer") filter.owner = req.user._id;
+
     const farms = await Farm.aggregatePaginate(
-        Farm.aggregate([]),
-        { 
+        Farm.aggregate([{ $match: filter }]),
+        {
             page: pageNum,
             limit: limitNum,
         }
@@ -29,10 +30,6 @@ const getAllFarms = asyncHandler(async (req, res) => {
 
 // create farm
 const addFarm = asyncHandler(async (req, res) => {
-    if (req.user.role !== "farmer") {
-        throw new ApiError(403, "Only farmers can create farms");
-    }
-
     const { name, type, location, size } = req.body;
 
     if (!(name && type && location && size)) {
@@ -57,36 +54,22 @@ const addFarm = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(201, farm, "Farm created successfully"));
-});
-
-// fetch their farms
-const getMyFarms = asyncHandler(async (req, res) => {
-    if (req.user.role !== "farmer") {
-        throw new ApiError(403, "Only farmers can view their farms");
-    }
-
-    const farms = await Farm.find({ owner: req.user._id });
-
-    return res.status(200).json(new ApiResponse(200, farms, "Farms fetched"));
+        .json(new ApiResponse(201, farm, "Farm created"));
 });
 
 // fetch farm details
 const getFarmById = asyncHandler(async (req, res) => {
-    const farm = await Farm.findOne({
-        _id: req.params.id,
-        owner: req.user._id,
-    }).populate(
-        "owner",
-        "name email"
-    );
+    const filter = { _id: req.params.id };
+
+    if (req.user.role === "farmer") {
+        filter.owner = req.user._id;
+    }
+
+    const farm = await Farm.findOne(filter).populate("owner", "name email");
 
     if (!farm) throw new ApiError(404, "Farm not found");
 
-    if (
-        farm.owner._id.toString() !== req.user._id.toString() &&
-        req.user.role !== "admin"
-    ) {
+    if (farm.owner._id.toString() !== req.user._id.toString()) {
         throw new ApiError(403, "You are not allowed to access this farm");
     }
 
@@ -95,10 +78,13 @@ const getFarmById = asyncHandler(async (req, res) => {
 
 // delete farm
 const deleteFarm = asyncHandler(async (req, res) => {
-    const farm = await Farm.findOneAndDelete({
-        _id: req.params.id,
-        owner: req.user._id,
-    });
+    const filter = { _id: req.params.id };
+
+    if (req.user.role === "farmer") {
+        filter.owner = req.user._id;
+    }
+
+    const farm = await Farm.findOneAndDelete(filter);
 
     if (!farm) throw new ApiError(404, "farm not found");
 
@@ -118,10 +104,7 @@ const updateFarm = asyncHandler(async (req, res) => {
 
     if (!farm) throw new ApiError(404, "Farm not found");
 
-    if (
-        farm.owner._id.toString() !== req.user._id.toString() &&
-        req.user.role !== "admin"
-    ) {
+    if (farm.owner._id.toString() !== req.user._id.toString()) {
         throw new ApiError(403, "You are not allowed to Update this farm");
     }
 
@@ -153,7 +136,6 @@ const updateFarm = asyncHandler(async (req, res) => {
 
 export {
     getAllFarms,
-    getMyFarms,
     addFarm,
     getFarmById,
     deleteFarm,

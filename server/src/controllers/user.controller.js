@@ -2,13 +2,18 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-// import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
 };
+
+const getAllUsers = asyncHandler(async (req, res) => {
+    const users = await User.find().select("-password -refreshToken");
+
+    return res.status(200).json(new ApiResponse(200, users, "Users fetched successfully"));
+})
 
 const generateTokens = async (user) => {
     try {
@@ -29,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, phone, role } = req.body;
 
     // data validations
-    if (!phone && [name, email, password, role].some((field) => !field?.trim())) {
+    if (![name, email, password, role, phone].every(Boolean)) {
         throw new ApiError(400, "All fields are required");
     }
 
@@ -53,19 +58,26 @@ const registerUser = asyncHandler(async (req, res) => {
         role,
     });
 
-    // remove password and refresh token
-    const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken"
-    );
+    const tokens = await generateTokens(user);
 
-    if (!createdUser)
-        throw new ApiError(500, "Something went wrong while registering user");
+    const createdUser = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+    };
 
-    // return respose , statusCode
     return res
         .status(201)
+        .cookie("accessToken", tokens.accessToken, options)
+        .cookie("refreshToken", tokens.refreshToken, options)
         .json(
-            new ApiResponse(201, createdUser, "User registered Successfully")
+            new ApiResponse(
+                201,
+                { user: createdUser, ...tokens },
+                "User registered Successfully"
+            )
         );
 });
 
@@ -94,23 +106,26 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     // generate access , refresh tokens , login permission
-    const { accessToken, refreshToken } = await generateTokens(user);
+    const tokens = await generateTokens(user);
 
-    const loggedUser = await User.findById(user._id).select(
-        "-password -refreshToken"
-    );
+    const loggedUser = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+    };
 
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", tokens.accessToken, options)
+        .cookie("refreshToken", tokens.refreshToken, options)
         .json(
             new ApiResponse(
                 200,
                 {
                     user: loggedUser,
-                    accessToken,
-                    refreshToken,
+                    ...tokens,
                 },
                 "User logged In Successfully"
             )
@@ -173,4 +188,4 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         );
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+export { getAllUsers, registerUser, loginUser, logoutUser, refreshAccessToken };
