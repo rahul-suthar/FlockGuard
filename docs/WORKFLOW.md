@@ -44,13 +44,4 @@ flowchart TD
     B --> C[Pharmacy Requested]
     C --> D[Pharmacy Responded]
     D --> E[Closed]
-
-    -------------------------------------------------------------
-
-    new (farmer uploads image)
-        ↓
-    vet_review (farmer consults vet)
-        ↓
-    pharmacy_requested (vet prescribes, farmer requests medicines)
-        ↓
-    closed (pharmacy responds & fulfills order)
+```
