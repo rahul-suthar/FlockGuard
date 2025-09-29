@@ -1,10 +1,11 @@
 {
-  "name": "yt-back",
+  "name": "FlockGuard",
   "version": "1.0.0",
   "description": "",
   "keywords": [
-    "javascript",
-    "backend"
+    "FlockGuard",
+    "Farm Security",
+    "SaferFarms"
   ],
   "license": "ISC",
   "author": "Rahul Suthar",

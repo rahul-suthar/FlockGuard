@@ -12,8 +12,10 @@ const options = {
 const getAllUsers = asyncHandler(async (req, res) => {
     const users = await User.find().select("-password -refreshToken");
 
-    return res.status(200).json(new ApiResponse(200, users, "Users fetched successfully"));
-})
+    return res
+        .status(200)
+        .json(new ApiResponse(200, users, "Users fetched successfully"));
+});
 
 const generateTokens = async (user) => {
     try {
@@ -58,8 +60,6 @@ const registerUser = asyncHandler(async (req, res) => {
         role,
     });
 
-    const tokens = await generateTokens(user);
-
     const createdUser = {
         _id: user._id,
         name: user.name,
@@ -70,15 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .cookie("accessToken", tokens.accessToken, options)
-        .cookie("refreshToken", tokens.refreshToken, options)
-        .json(
-            new ApiResponse(
-                201,
-                { user: createdUser, ...tokens },
-                "User registered Successfully"
-            )
-        );
+        .json(new ApiResponse(201, {}, "User registered Successfully"));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
