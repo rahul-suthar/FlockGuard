@@ -1,4 +1,4 @@
-# 🐖🐓 BioFarm - Digital Farm Biosecurity Portal
+# 🐖🐓 FlockGuard - Smarter Farms. Safer Flocks.
 
 A full-stack platform to help pig & poultry farmers implement biosecurity measures, detect diseases early, and receive timely alerts — empowering farmers with digital tools for healthier livestock and improved productivity.
 
@@ -35,6 +35,10 @@ These outbreaks cause mass culling, huge economic losses, and threaten food secu
 
 ## 🛠️ Tech Stack
 
+**Mobile :**
+
+- React-Native Cli
+
 **Frontend (client):**
 
 - React + Vite
@@ -61,8 +65,6 @@ These outbreaks cause mass culling, huge economic losses, and threaten food secu
 
 - Docker (containerization)
 
-<!-- Firebase Auth (Google login for farmers, optional) -->
-
 - GitHub Actions (CI/CD)
 
 ## Folder Structure
@@ -76,6 +78,7 @@ project-root/
 │   ├── models/
 │   ├── middlewares/
 │   ├── utils/
+│── mobile/
 │── ml/
 │── docs/
 │── README.md
@@ -97,6 +100,6 @@ project-root/
 
 - Expand to other livestock sectors.
 
-## Team - Club Sphere
+## Author
 
-- Backend, ML, Frontend
+- Rahul Suthar
