@@ -1,0 +1,4 @@
+-keep class com.facebook.** { *; }
+-keep class expo.modules.** { *; }
+-dontwarn com.facebook.**
+-dontwarn expo.modules.**
