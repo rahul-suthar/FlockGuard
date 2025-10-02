@@ -11,7 +11,7 @@ const colors = {
   success: '#5BBB71CC',
   error: '#D94A38E6',
   warning: '#FFBE57B3',
-  diabled: '#A3A3A3',
+  disabled: '#A3A3A3',
   input: '#D9D9D9',
 };
 

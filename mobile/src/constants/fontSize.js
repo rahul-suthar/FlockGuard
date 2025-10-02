@@ -12,7 +12,7 @@ const fonts = {
   },
   btn: {
     primary: 24,
-    secondary: 16
+    secondary: 20
   },
   text: {
     primary: 16,
