@@ -99,7 +99,7 @@ const Home = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
-        <View>
+        <View style={{marginVertical: 4}}>
           <View style={styles.searchbarBox}>
             <TextInput
               value={searchQuery}
@@ -141,7 +141,7 @@ const Home = () => {
         <View
           style={{
             width: '90%',
-            height: '84%',
+            height: '82%',
             backgroundColor: 'transparent',
             justifyContent: 'center',
           }}
@@ -154,7 +154,7 @@ const Home = () => {
               renderItem={({ item }) => (
                 <Card item={item} handleDelete={handleDelete} />
               )}
-              contentContainerStyle={{ gap: 24, paddingBottom: 120 }}
+              contentContainerStyle={{ gap: 22, paddingBottom: 10 }}
               keyExtractor={item => item._id.toString()}
               showsVerticalScrollIndicator={false}
               initialNumToRender={5}
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 80,
     paddingTop: -30,
-    gap: 10,
+    gap: 8,
   },
   inputs: {
     backgroundColor: colors.input,
@@ -208,7 +208,11 @@ const styles = StyleSheet.create({
     fontSize: fonts.text.primary,
     color: colors.textPrimary,
   },
-  searchbarBox: { flexDirection: 'row', gap: 20, alignItems: 'center' },
+  searchbarBox: { 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    gap: 20, 
+  },
   resetQuery: {
     position: 'absolute',
     right: 12,
@@ -228,8 +232,8 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: colors.accent,
     position: 'absolute',
-    right: 40,
-    bottom: 100,
+    right: 24,
+    bottom: 26,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
