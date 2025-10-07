@@ -2,7 +2,7 @@ import axios from 'axios';
 import { AUTH_API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const handleRegister = async (regForm, resetRegForm, showPopup) => {
+const handleRegister = async (regForm, showPopup) => {
   try {
     await axios.post(`${AUTH_API_URL}/register`, regForm);
     showPopup({ success: true, msg: 'Registration successfull!' });
@@ -10,12 +10,10 @@ const handleRegister = async (regForm, resetRegForm, showPopup) => {
     let msg =
       error.response?.data?.message || error.message || 'Registration failed!';
     showPopup({ success: false, msg });
-  } finally {
-    resetRegForm();
   }
 };
 
-const handleLogin = async (logForm, resetLogForm, setUser, showPopup) => {
+const handleLogin = async (logForm, setUser, showPopup) => {
   try {
     const res = await axios.post(`${AUTH_API_URL}/login`, logForm);
     const { user, accessToken, refreshToken } = res?.data?.data || {};
@@ -26,20 +24,29 @@ const handleLogin = async (logForm, resetLogForm, setUser, showPopup) => {
 
     setUser(user);
     showPopup({ success: true, msg: 'Login successfull!' });
-  } catch (error) {
-    let msg = error.response?.data?.message || error.message || 'Login failed!';
-    showPopup({ success: false, msg });
-  } finally {
-    resetLogForm();
+  } catch {
+    showPopup({ success: false, msg: 'Invalid credentials' });
   }
 };
 
-const handleLogOut = async (setUser, showPopup) => {
+const handleLogOut = async (setUser, showPopup, setShowLoad) => {
+  setShowLoad({ show: true, msg: 'Logging Out...' });
   await axios.post(`${AUTH_API_URL}/logout`);
 
-  await AsyncStorage.multiRemove(['user', 'accessToken', 'refreshToken']);
+  setShowLoad({ show: true, msg: 'Removing cached data' });
+
+  await AsyncStorage.multiRemove([
+    'user',
+    'accessToken',
+    'refreshToken',
+  ]);
+  
+  const farmString = await AsyncStorage.getItem('farms');
+  if (farmString) await AsyncStorage.removeItem('farms');
+
   setUser(null);
-  showPopup({success: true, msg: 'Logged out'})
+  showPopup({ success: true, msg: 'Logged out' });
+  setShowLoad({ show: false, msg: '' });
 };
 
 export { handleRegister, handleLogin, handleLogOut };

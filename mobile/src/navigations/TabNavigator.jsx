@@ -1,6 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home.jsx';
-import Report from '../screens/Report.jsx';
 import Profile from '../screens/Profile.jsx';
 import TabBar from '../components/TabBar.jsx'
 import { colors } from '../constants/colors.js';
@@ -28,7 +27,6 @@ const TabNavigator = () => {
       }}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Reports" component={Report} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );

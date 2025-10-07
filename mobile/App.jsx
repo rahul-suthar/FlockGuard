@@ -4,14 +4,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './src/navigations/StackNavigator.jsx';
 import TabNavigator from './src/navigations/TabNavigator.jsx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthProvider, useAuth } from './src/context/AuthContext.js';
-import { PopupProvider, usePopup } from './src/context/PopupContext.js';
+import { AuthProvider, useAuth } from './src/context/Auth.context.js';
+import { PopupProvider, usePopup } from './src/context/Popup.context.js';
+import { LoaderProvider, useLoader } from './src/context/Loader.context.js';
 import Popup from './src/components/Popup.jsx';
 import { colors } from './src/constants/colors.js';
+import GlobalLoader from './src/components/Loader.jsx';
 
 const MainApp = () => {
   const { user, setUser } = useAuth();
   const { popup } = usePopup();
+  const { showLoad } = useLoader();
   const theme = useColorScheme();
   const barStyle = theme === 'light' ? 'dark-content' : 'light-content';
 
@@ -21,7 +24,7 @@ const MainApp = () => {
       setUser(userString ? JSON.parse(userString) : null);
     };
     fetchUser();
-  }, [setUser]);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -32,6 +35,7 @@ const MainApp = () => {
           : <StackNavigator />
         }
       </NavigationContainer>
+      {showLoad.show && <GlobalLoader /> }
       {popup.show && <Popup data={popup.data} />}
     </View>
   )
@@ -41,7 +45,9 @@ const App = () => {
   return (
     <PopupProvider>
       <AuthProvider>
-        <MainApp />
+        <LoaderProvider>
+          <MainApp />
+        </LoaderProvider>
       </AuthProvider>
     </PopupProvider>
   )

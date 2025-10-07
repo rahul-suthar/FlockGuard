@@ -1,4 +1,5 @@
 import {
+  Image,
   Keyboard,
   StyleSheet,
   Text,
@@ -11,12 +12,14 @@ import { colors } from '../constants/colors.js';
 import { fonts } from '../constants/fontSize.js';
 import { handleLogin } from '../apis/auth.js';
 import { useCustomState } from '../hooks/state.js';
-import { useAuth } from '../context/AuthContext.js';
-import { usePopup } from '../context/PopupContext.js';
+import { useAuth } from '../context/Auth.context.js';
+import { usePopup } from '../context/Popup.context.js';
+import { useLoader } from '../context/Loader.context.js';
 
 const Login = ({ navigation }) => {
   const { setUser } = useAuth();
   const { showPopup } = usePopup();
+  const { setShowLoad } = useLoader();
   const [logForm, setLogForm, resetLogForm] = useCustomState({
     email: '',
     password: '',
@@ -26,13 +29,27 @@ const Login = ({ navigation }) => {
     setLogForm(prev => ({ ...prev, [field]: text }));
   };
 
+  const handleSubmit = async () => {
+    if (!logForm.email.trim() || !logForm.password.trim()) {
+      showPopup({ success: false, msg: 'All fields required.' });
+      return;
+    }
+    setShowLoad({ show: true, msg: 'Logging In...' });
+    try {
+      await handleLogin(logForm, setUser, showPopup);
+      resetLogForm();
+    } finally {
+      setShowLoad({ show: false, msg: '' });
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
-        <View style={styles.welcomeBox}>
-          <Text style={styles.msgText}>Welcome to,</Text>
-          <Text style={styles.brandText}>FlockGuard</Text>
-        </View>
+        <Image
+          style={styles.img}
+          source={require('../assets/images/logo.png')}
+        />
         <View style={styles.form}>
           <Text style={styles.headText}>Login</Text>
           <View style={{ gap: 30 }}>
@@ -42,6 +59,7 @@ const Login = ({ navigation }) => {
               value={logForm.email}
               onChangeText={text => handleDataChange('email', text)}
               placeholderTextColor={colors.textSecondary}
+              autoCapitalize="none"
             />
             <TextInput
               style={styles.inputs}
@@ -50,12 +68,13 @@ const Login = ({ navigation }) => {
               onChangeText={text => handleDataChange('password', text)}
               placeholderTextColor={colors.textSecondary}
               secureTextEntry={true}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.btns}>
             <TouchableOpacity
               style={styles.mainBtn}
-              onPress={() => handleLogin(logForm, resetLogForm, setUser, showPopup)}
+              onPress={() => handleSubmit()}
             >
               <Text style={styles.mainText}>Login</Text>
             </TouchableOpacity>
@@ -78,24 +97,15 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.appBg,
     position: 'relative',
+    gap: 30,
   },
-  welcomeBox: {
-    alignItems: 'center',
-    gap: 5,
-  },
-  msgText: {
-    fontSize: fonts.head.primary,
-    fontFamily: 'Lato-Bold',
-    color: colors.textPrimary,
-  },
-  brandText: {
-    fontSize: fonts.brand.main,
-    fontFamily: 'Lato-Black',
-    color: colors.primary,
+  img: {
+    width: 250,
+    height: 250,
   },
   form: {
     height: '50%',

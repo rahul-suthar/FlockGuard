@@ -9,14 +9,14 @@ import {
 } from 'react-native';
 import { colors } from '../constants/colors.js';
 import { fonts } from '../constants/fontSize.js';
-import { Picker } from '@react-native-picker/picker';
-import { roleOptions } from '../constants/roles.js';
 import { handleRegister } from '../apis/auth.js';
 import { useCustomState } from '../hooks/state.js';
-import { usePopup } from '../context/PopupContext.js';
+import { usePopup } from '../context/Popup.context.js';
+import { useLoader } from '../context/Loader.context.js';
 
 const Register = ({ navigation }) => {
   const { showPopup } = usePopup();
+  const { setShowLoad } = useLoader();
   const [regForm, setRegForm, resetRegForm] = useCustomState({
     name: '',
     email: '',
@@ -25,11 +25,32 @@ const Register = ({ navigation }) => {
       code: '+91',
       mobileNo: 1234567890,
     },
-    role: '',
+    role: 'farmer',
   });
 
   const handleDataChange = (field, text) => {
     setRegForm(prev => ({ ...prev, [field]: text }));
+  };
+
+  const handleSubmit = async () => {
+    const requiredFields = ['name', 'email', 'password'];
+
+    const hasEmpty = requiredFields.some(field => {
+      const value = regForm[field];
+      return !value || value.trim().length === 0;
+    });
+
+    if (hasEmpty) {
+      showPopup({ success: false, msg: 'All fields required.' });
+      return;
+    }
+    setShowLoad({ show: true, msg: 'Registering User...' });
+    try {
+      await handleRegister(regForm, showPopup);
+      resetRegForm();
+    } finally {
+      setShowLoad({ show: false, msg: '' });
+    }
   };
 
   return (
@@ -64,35 +85,11 @@ const Register = ({ navigation }) => {
               autoCapitalize="none"
               secureTextEntry={true}
             />
-            <View style={[styles.inputs, { paddingVertical: 0 }]}>
-              <Picker
-                selectedValue={regForm.role}
-                onValueChange={value => handleDataChange('role', value)}
-                placeholderTextColor={colors.textSecondary}
-                dropdownIconColor={colors.textSecondary}
-                mode="dropdown"
-              >
-                <Picker.Item
-                  label="Select role..."
-                  value=""
-                  enabled={false}
-                  color={colors.textSecondary}
-                />
-                {roleOptions.map(option => (
-                  <Picker.Item
-                    key={option.value}
-                    label={option.label}
-                    value={option.value}
-                    style={styles.picker}
-                  />
-                ))}
-              </Picker>
-            </View>
           </View>
           <View style={styles.btns}>
             <TouchableOpacity
               style={styles.mainBtn}
-              onPress={() => handleRegister(regForm, resetRegForm, showPopup)}
+              onPress={() => handleSubmit()}
             >
               <Text style={styles.mainText}>Register</Text>
             </TouchableOpacity>

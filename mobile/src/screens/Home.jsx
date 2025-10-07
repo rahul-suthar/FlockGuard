@@ -1,61 +1,82 @@
 import {
   Alert,
   FlatList,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fontSize';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FarmInput from '../components/FarmInput.jsx';
+import { BlurView } from '@react-native-community/blur';
+import Card from '../components/Card.jsx';
+import { fetchFarms } from '../apis/user.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { usePopup } from '../context/Popup.context.js';
+import { useLoader } from '../context/Loader.context.js';
 
-const filters = ['All', 'Pigs', 'Hens'];
-const farmsArr = [
-  {
-    id: 1,
-    name: 'Pigny',
-    size: 200,
-    location: 'talab, france, 388291',
-    type: 'Pig',
-    status: 'Healthy',
-  },
-  {
-    id: 2,
-    name: 'Henies',
-    size: 500,
-    location: 'Albert Hall, france, 346291',
-    type: 'Hen',
-    status: 'need checkup',
-  },
-  {
-    id: 3,
-    name: 'Heniessy',
-    size: 500,
-    location: 'Albert Hall, france, 346291',
-    type: 'Hen',
-    status: 'Healthy',
-  },
-  {
-    id: 4,
-    name: 'pinnve',
-    size: 500,
-    location: 'Albert Hall, france, 346291',
-    type: 'Hen',
-    status: 'need checkup',
-  },
-];
+const filters = ['All', 'Pig', 'Poultry'];
 
 const Home = () => {
-  const [farms, setFarms] = useState(farmsArr);
+  const [farms, setFarms] = useState([]);
+  const [currFilter, setCurrFilter] = useState('All');
+  const [filteredFarm, setfilteredFarm] = useState([]);
+  const [searchQuery, setsearchQuery] = useState('');
+  const [openform, setOpenForm] = useState(false);
+  const { showPopup } = usePopup();
+  const { setShowLoad } = useLoader();
+
+  useEffect(() => {
+    const getFarms = async () => {
+      const cachedFarmsString = await AsyncStorage.getItem('farms');
+      let cachedFarms = [];
+      if (cachedFarmsString) {
+        cachedFarms = JSON.parse(cachedFarmsString);
+      }
+      if (cachedFarms.length === 0) {
+        const data = await fetchFarms(showPopup);
+        await AsyncStorage.setItem('farms', JSON.stringify(data));
+        setFarms(data || []);
+      } else {
+        setFarms(cachedFarms);
+      }
+    };
+
+    const load = async () => {
+      setShowLoad({ show: true, msg: 'Loading Farms' });
+      await getFarms();
+      setShowLoad({ show: false, msg: '' });
+    };
+
+    load();
+  }, []);
+
+  useEffect(() => {
+    const filtered = farms.filter(item => {
+      const type =
+        currFilter !== 'All' ? item.type === currFilter.toLowerCase() : true;
+      const name =
+        searchQuery !== ''
+          ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
+          : true;
+
+      return type && name;
+    });
+
+    setfilteredFarm(filtered);
+  }, [farms, currFilter, searchQuery]);
 
   const handleDelete = item => {
     Alert.alert(
-      'Confirm Delete',
-      `Are you sure ?\n"${item.name}" will be deleted`,
+      'Are you sure ?',
+      `"${item.name}" will be deleted`,
       [
         {
           text: 'Cancel',
@@ -64,8 +85,10 @@ const Home = () => {
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => {
-            setFarms(prev => prev.filter(f => f.id !== item.id));
+          onPress: async () => {
+            const updatedFarms = farms.filter(f => f._id !== item._id);
+            setFarms(updatedFarms);
+            await AsyncStorage.setItem('farms', JSON.stringify(updatedFarms));
           },
         },
       ],
@@ -74,99 +97,91 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <View style={styles.searchbarBox}>
-          <TextInput placeholder="search your farm" style={styles.inputs} />
-          <View style={styles.filterBox}>
-            <Ionicons name="filter" size={32} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <View style={styles.searchbarBox}>
+            <TextInput
+              value={searchQuery}
+              onChangeText={text => setsearchQuery(text)}
+              placeholderTextColor={colors.textSecondary}
+              placeholder="search your farm"
+              style={styles.inputs}
+              autoCapitalize="none"
+            />
+            {searchQuery !== '' && (
+              <TouchableOpacity
+                style={styles.resetQuery}
+                onPress={() => setsearchQuery('')}
+              >
+                <Ionicons name="close" size={24} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.filterToggles}>
+            {filters.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.filters,
+                  {
+                    backgroundColor:
+                      currFilter === item ? colors.accent : colors.disabled,
+                    elevation: currFilter === item ? 3 : 1,
+                    borderWidth: currFilter === item ? 0.7 : 0.2,
+                  },
+                ]}
+                onPress={() => setCurrFilter(item)}
+              >
+                <Text>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
-        <View style={styles.filterToggles}>
-          {filters.map((item, index) => (
-            <View key={index} style={styles.filters}>
-              <Text>{item}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-      <View style={{ width: '90%', height: '84%' }}>
-        <FlatList
-          data={farms}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: fonts.head.secondary.light,
-                    fontFamily: 'Lato-Bold',
-                  }}
-                >
-                  {item.name}
-                </Text>
-                <View style={styles.info}>
-                  <View
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 50,
-                      backgroundColor:
-                        item.type === 'Pig' ? colors.pigType : colors.henType,
-                    }}
-                  />
-                  <Text>{item.type}</Text>
-                </View>
-              </View>
-              <View>
-                <Text>Size : {item.size}</Text>
-                <Text>Location : {item.location}</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <View
-                  style={[
-                    styles.btn,
-                    {
-                      backgroundColor:
-                        item.status === 'Healthy'
-                          ? colors.accent
-                          : colors.warning,
-                    },
-                  ]}
-                >
-                  <Text style={{ fontFamily: 'Lato-Bold' }}>{item.status}</Text>
-                </View>
-                <TouchableOpacity
-                  style={[styles.btn, { backgroundColor: colors.error }]}
-                  onPress={() => handleDelete(item)}
-                >
-                  <Text
-                    style={{ fontFamily: 'Lato-Bold', color: colors.textWhite }}
-                  >
-                    Delete
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+        <View
+          style={{
+            width: '90%',
+            height: '84%',
+            backgroundColor: 'transparent',
+            justifyContent: 'center',
+          }}
+        >
+          {filteredFarm.length === 0 ? (
+            <Text style={{ fontSize: 18, textAlign: 'center' }}>No Farms</Text>
+          ) : (
+            <FlatList
+              data={filteredFarm}
+              renderItem={({ item }) => (
+                <Card item={item} handleDelete={handleDelete} />
+              )}
+              contentContainerStyle={{ gap: 24, paddingBottom: 120 }}
+              keyExtractor={item => item._id.toString()}
+              showsVerticalScrollIndicator={false}
+              initialNumToRender={5}
+            />
           )}
-          contentContainerStyle={{ gap: 24, paddingBottom: 120 }}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-      <TouchableOpacity style={styles.addBtn}>
-        <Ionicons size={40} name="add" />
-      </TouchableOpacity>
-    </SafeAreaView>
+        </View>
+
+        {openform ? (
+          <>
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="white"
+            />
+            <FarmInput setOpenForm={setOpenForm} setFarms={setFarms} />
+          </>
+        ) : (
+          <TouchableOpacity
+            style={styles.addBtn}
+            onPress={() => setOpenForm(true)}
+          >
+            <Ionicons size={40} name="add" />
+          </TouchableOpacity>
+        )}
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -178,79 +193,48 @@ const styles = StyleSheet.create({
     backgroundColor: colors.appBg,
     paddingHorizontal: 20,
     alignItems: 'center',
-    paddingBottom: 90,
-    paddingTop: -20,
-    gap: 24,
+    paddingBottom: 80,
+    paddingTop: -30,
+    gap: 10,
   },
   inputs: {
     backgroundColor: colors.input,
-    width: 300,
+    width: 350,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingLeft: 20,
+    paddingRight: 42,
     borderRadius: 50,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'Lato-Bold',
     fontSize: fonts.text.primary,
     color: colors.textPrimary,
   },
   searchbarBox: { flexDirection: 'row', gap: 20, alignItems: 'center' },
-  filterBox: {
-    width: 45,
-    height: 45,
-    backgroundColor: colors.input,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
+  resetQuery: {
+    position: 'absolute',
+    right: 12,
   },
   filterToggles: {
     flexDirection: 'row',
     gap: 20,
-    padding: 15,
+    padding: 16,
   },
   filters: {
-    borderWidth: 0.8,
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 50,
-    backgroundColor: colors.accent,
-  },
-  card: {
-    backgroundColor: colors.cardBg,
-    elevation: 5,
-    borderRadius: 20,
-    borderWidth: 0.4,
-    gap: 20,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 15,
-  },
-  btn: {
-    paddingVertical: 5,
-    paddingHorizontal: 20,
-    backgroundColor: colors.accent,
-    borderRadius: 50,
-  },
-  info: {
-    paddingVertical: 1,
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    borderRadius: 50,
-    alignItems: 'center',
-    backgroundColor: colors.accent,
-    gap: 10,
   },
   addBtn: {
     width: 60,
     height: 60,
-    backgroundColor: '#964141',
+    backgroundColor: colors.accent,
     position: 'absolute',
     right: 40,
     bottom: 100,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    elevation: 10,
+    borderWidth: 0.3,
+    elevation: 2,
     padding: 10,
   },
 });

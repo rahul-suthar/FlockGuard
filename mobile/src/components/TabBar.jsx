@@ -1,5 +1,4 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '../constants/colors';
 
@@ -29,12 +28,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
           }
         };
 
-        const iconName =
-          route.name === 'Home'
-            ? 'home'
-            : route.name === 'Reports'
-            ? 'bar-chart'
-            : 'person';
+        const iconName = route.name === 'Home' ? 'home' : 'person';
 
         return (
           <TouchableOpacity
@@ -42,11 +36,14 @@ const TabBar = ({ state, descriptors, navigation }) => {
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             onPress={onPress}
-            style={[styles.tab, {backgroundColor: isFocused ? colors.input : 'transparent'}]}
+            style={[
+              styles.tab,
+              { backgroundColor: isFocused ? colors.input : 'transparent' },
+            ]}
           >
             <Ionicons
               name={iconName}
-              size={isFocused ? 35 : 25}
+              size={isFocused ? 30 : 20}
               color={isFocused ? colors.primary : colors.textSecondary}
             />
             <Text
@@ -54,6 +51,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
                 color: colors.textPrimary,
                 fontFamily: 'Lato-Bold',
                 display: isFocused ? 'none' : '',
+                fontSize: 12,
               }}
             >
               {label}
@@ -89,6 +87,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 20,
-    borderRadius: 50
+    borderRadius: 50,
   },
 });
