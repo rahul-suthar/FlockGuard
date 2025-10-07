@@ -106,6 +106,8 @@ const loginUser = asyncHandler(async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
+        language: user.language,
+        createdAt: user.createdAt,
     };
 
     return res
