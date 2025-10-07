@@ -1,10 +1,16 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { colors } from '../constants/colors';
+import { useTheme } from '../context/Theme.context';
 
 const TabBar = ({ state, descriptors, navigation }) => {
+  const colors = useTheme();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { borderColor: colors.primary, backgroundColor: colors.appBg },
+      ]}
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -72,13 +78,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 64,
     borderWidth: 0.3,
-    borderColor: colors.primary,
     borderRadius: 20,
     position: 'absolute',
     bottom: 24,
     left: 110,
     right: 110,
-    backgroundColor: colors.appBg,
     elevation: 2,
     shadowRadius: 20,
   },

@@ -7,14 +7,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { colors } from '../constants/colors.js';
 import { fonts } from '../constants/fontSize.js';
 import { handleRegister } from '../apis/auth.js';
 import { useCustomState } from '../hooks/state.js';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
+import { useTheme } from '../context/Theme.context.js';
 
 const Register = ({ navigation }) => {
+  const colors = useTheme();
   const { showPopup } = usePopup();
   const { setShowLoad } = useLoader();
   const [regForm, setRegForm, resetRegForm] = useCustomState({
@@ -23,13 +24,23 @@ const Register = ({ navigation }) => {
     password: '',
     phone: {
       code: '+91',
-      mobileNo: 1234567890,
+      mobileNo: 0,
     },
     role: 'farmer',
   });
 
   const handleDataChange = (field, text) => {
-    setRegForm(prev => ({ ...prev, [field]: text }));
+    if (field === 'mobileNo') {
+      setRegForm(prev => ({
+        ...prev,
+        phone: {
+          ...prev.phone,
+          mobileNo: Number(text),
+        },
+      }));
+    } else {
+      setRegForm(prev => ({ ...prev, [field]: text }));
+    }
   };
 
   const handleSubmit = async () => {
@@ -44,6 +55,12 @@ const Register = ({ navigation }) => {
       showPopup({ success: false, msg: 'All fields required.' });
       return;
     }
+
+    if (regForm.phone.mobileNo <= 999999999) {
+      showPopup({ success: false, msg: 'Invalid mobile number.' });
+      return;
+    }
+
     setShowLoad({ show: true, msg: 'Registering User...' });
     try {
       await handleRegister(regForm, showPopup);
@@ -55,12 +72,17 @@ const Register = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.appBg }]}>
         <View style={styles.form}>
-          <Text style={styles.headText}>Register</Text>
-          <View style={{ gap: 30, alignItems: 'center' }}>
+          <Text style={[styles.headText, { color: colors.textPrimary }]}>
+            Register
+          </Text>
+          <View style={{ gap: 24, alignItems: 'center' }}>
             <TextInput
-              style={styles.inputs}
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
               placeholder="name"
               value={regForm.name}
               onChangeText={text => handleDataChange('name', text)}
@@ -68,7 +90,10 @@ const Register = ({ navigation }) => {
               autoCapitalize="none"
             />
             <TextInput
-              style={styles.inputs}
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
               placeholder="email"
               placeholderTextColor={colors.textSecondary}
               value={regForm.email}
@@ -77,7 +102,10 @@ const Register = ({ navigation }) => {
               keyboardType="email-address"
             />
             <TextInput
-              style={styles.inputs}
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
               placeholder="password"
               value={regForm.password}
               onChangeText={text => handleDataChange('password', text)}
@@ -85,20 +113,38 @@ const Register = ({ navigation }) => {
               autoCapitalize="none"
               secureTextEntry={true}
             />
+            <TextInput
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
+              placeholder="mobile No."
+              value={
+                !regForm.phone.mobileNo ? '' : String(regForm.phone.mobileNo)
+              }
+              onChangeText={text => handleDataChange('mobileNo', text)}
+              placeholderTextColor={colors.textSecondary}
+              autoCapitalize="none"
+              keyboardType="numeric"
+            />
           </View>
           <View style={styles.btns}>
             <TouchableOpacity
-              style={styles.mainBtn}
+              style={[styles.mainBtn, { backgroundColor: colors.primary }]}
               onPress={() => handleSubmit()}
             >
-              <Text style={styles.mainText}>Register</Text>
+              <Text style={[styles.mainText, { color: colors.textWhite }]}>
+                Register
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.secBtn}
               onPress={() => navigation.goBack()}
             >
-              <Text style={styles.text}>Already a User?</Text>
-              <Text style={styles.secText}>Login</Text>
+              <Text style={[styles.text, { color: colors.textSecondary}]}>Already a User?</Text>
+              <Text style={[styles.secText, { color: colors.primary }]}>
+                Login
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -115,7 +161,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 30,
-    backgroundColor: colors.appBg,
     position: 'relative',
   },
   form: {
@@ -126,29 +171,20 @@ const styles = StyleSheet.create({
   headText: {
     fontSize: fonts.head.primary,
     fontFamily: 'Lato-Bold',
-    color: colors.textPrimary,
   },
   inputs: {
-    backgroundColor: colors.input,
     width: 300,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 50,
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.primary,
-    color: colors.textPrimary,
-  },
-  picker: {
-    backgroundColor: colors.input,
-    color: colors.primary,
-    margin: 3,
   },
   btns: {
     alignItems: 'center',
     gap: 20,
   },
   mainBtn: {
-    backgroundColor: colors.primary,
     width: 280,
     alignItems: 'center',
     padding: 10,
@@ -157,11 +193,11 @@ const styles = StyleSheet.create({
   mainText: {
     fontSize: fonts.btn.primary,
     fontFamily: 'Lato-Bold',
-    color: colors.textWhite,
   },
   secBtn: {
     flexDirection: 'row',
     gap: 10,
+    alignItems: 'center'
   },
   text: {
     fontSize: fonts.text.primary,
@@ -169,6 +205,5 @@ const styles = StyleSheet.create({
   secText: {
     fontSize: fonts.text.primary,
     fontFamily: 'Lato-Bold',
-    color: colors.primary,
   },
 });

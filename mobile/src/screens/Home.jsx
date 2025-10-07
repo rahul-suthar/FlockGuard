@@ -7,10 +7,10 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  useColorScheme,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '../constants/colors';
 import { fonts } from '../constants/fontSize';
 import { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +21,7 @@ import { fetchFarms } from '../apis/user.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
+import { useTheme } from '../context/Theme.context.js';
 
 const filters = ['All', 'Pig', 'Poultry'];
 
@@ -32,6 +33,8 @@ const Home = () => {
   const [openform, setOpenForm] = useState(false);
   const { showPopup } = usePopup();
   const { setShowLoad } = useLoader();
+  const colors = useTheme();
+  const theme = useColorScheme();
 
   useEffect(() => {
     const getFarms = async () => {
@@ -98,15 +101,20 @@ const Home = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={styles.container}>
-        <View style={{marginVertical: 4}}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.appBg }]}
+      >
+        <View style={{ marginVertical: 4 }}>
           <View style={styles.searchbarBox}>
             <TextInput
               value={searchQuery}
               onChangeText={text => setsearchQuery(text)}
               placeholderTextColor={colors.textSecondary}
               placeholder="search your farm"
-              style={styles.inputs}
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
               autoCapitalize="none"
             />
             {searchQuery !== '' && (
@@ -133,7 +141,13 @@ const Home = () => {
                 ]}
                 onPress={() => setCurrFilter(item)}
               >
-                <Text>{item}</Text>
+                <Text
+                  style={{
+                    color: currFilter === item ? '' : colors.textSecondary,
+                  }}
+                >
+                  {item}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -147,14 +161,26 @@ const Home = () => {
           }}
         >
           {filteredFarm.length === 0 ? (
-            <Text style={{ fontSize: 18, textAlign: 'center' }}>No Farms</Text>
+            <Text
+              style={{
+                fontSize: 18,
+                textAlign: 'center',
+                color: colors.textPrimary,
+              }}
+            >
+              No Farms
+            </Text>
           ) : (
             <FlatList
               data={filteredFarm}
               renderItem={({ item }) => (
                 <Card item={item} handleDelete={handleDelete} />
               )}
-              contentContainerStyle={{ gap: 22, paddingBottom: 10 }}
+              contentContainerStyle={{
+                gap: 22,
+                paddingBottom: 10,
+                backgroundColor: colors.appBg,
+              }}
               keyExtractor={item => item._id.toString()}
               showsVerticalScrollIndicator={false}
               initialNumToRender={5}
@@ -166,18 +192,18 @@ const Home = () => {
           <>
             <BlurView
               style={StyleSheet.absoluteFill}
-              blurType="light"
-              blurAmount={10}
+              blurType={theme}
+              blurAmount={4}
               reducedTransparencyFallbackColor="white"
             />
             <FarmInput setOpenForm={setOpenForm} setFarms={setFarms} />
           </>
         ) : (
           <TouchableOpacity
-            style={styles.addBtn}
+            style={[styles.addBtn, { backgroundColor: colors.accent }]}
             onPress={() => setOpenForm(true)}
           >
-            <Ionicons size={40} name="add" />
+            <Ionicons size={36} name="add" />
           </TouchableOpacity>
         )}
       </SafeAreaView>
@@ -190,15 +216,13 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.appBg,
     paddingHorizontal: 20,
     alignItems: 'center',
     paddingBottom: 80,
-    paddingTop: -30,
+    paddingTop: -40,
     gap: 8,
   },
   inputs: {
-    backgroundColor: colors.input,
     width: 350,
     paddingVertical: 12,
     paddingLeft: 20,
@@ -206,12 +230,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     fontFamily: 'Lato-Bold',
     fontSize: fonts.text.primary,
-    color: colors.textPrimary,
   },
-  searchbarBox: { 
-    flexDirection: 'row', 
+  searchbarBox: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 20, 
+    gap: 20,
   },
   resetQuery: {
     position: 'absolute',
@@ -228,17 +251,15 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   addBtn: {
-    width: 60,
-    height: 60,
-    backgroundColor: colors.accent,
+    width: 50,
+    height: 50,
     position: 'absolute',
     right: 24,
-    bottom: 26,
+    bottom: 32,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 0.3,
     elevation: 2,
-    padding: 10,
   },
 });

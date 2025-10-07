@@ -1,18 +1,28 @@
 import React from 'react';
-import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Text,
+  useColorScheme,
+} from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 import { useLoader } from '../context/Loader.context.js';
-import { colors } from '../constants/colors.js';
+import { useTheme } from '../context/Theme.context.js';
 
-const Loader = ({ msg }) => (
-  <View style={styles.loaderBox}>
-    <ActivityIndicator size={56} color={colors.primary} />
-    {msg ? <Text style={styles.text}>{msg}</Text> : null}
-  </View>
-);
+const Loader = ({ msg }) => {
+  const colors = useTheme();
+  return (
+    <View style={[styles.loaderBox, {backgroundColor: colors.input}]}>
+      <ActivityIndicator size={56} color={colors.primary} />
+      {msg ? <Text style={[styles.text, {color: colors.textPrimary}]}>{msg}</Text> : null}
+    </View>
+  );
+};
 
 const GlobalLoader = () => {
   const { showLoad } = useLoader();
+  const theme = useColorScheme();
 
   if (!showLoad.show) return null;
 
@@ -20,8 +30,8 @@ const GlobalLoader = () => {
     <>
       <BlurView
         style={StyleSheet.absoluteFill}
-        blurType="light"
-        blurAmount={10}
+        blurType={theme}
+        blurAmount={6}
         reducedTransparencyFallbackColor="white"
         pointerEvents="auto"
       />
@@ -38,12 +48,10 @@ const styles = StyleSheet.create({
   loaderBox: {
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: 'white',
     borderRadius: 20,
     elevation: 5,
     width: 200,
     height: 130,
-
   },
   text: {
     fontSize: 16,

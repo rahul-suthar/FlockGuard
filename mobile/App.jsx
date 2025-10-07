@@ -1,5 +1,5 @@
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native'
-import React, { useEffect } from 'react'
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './src/navigations/StackNavigator.jsx';
 import TabNavigator from './src/navigations/TabNavigator.jsx';
@@ -7,8 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuth } from './src/context/Auth.context.js';
 import { PopupProvider, usePopup } from './src/context/Popup.context.js';
 import { LoaderProvider, useLoader } from './src/context/Loader.context.js';
+import { ThemeProvider, useTheme } from './src/context/Theme.context.js';
 import Popup from './src/components/Popup.jsx';
-import { colors } from './src/constants/colors.js';
 import GlobalLoader from './src/components/Loader.jsx';
 
 const MainApp = () => {
@@ -16,6 +16,7 @@ const MainApp = () => {
   const { popup } = usePopup();
   const { showLoad } = useLoader();
   const theme = useColorScheme();
+  const colors = useTheme();
   const barStyle = theme === 'light' ? 'dark-content' : 'light-content';
 
   useEffect(() => {
@@ -27,31 +28,30 @@ const MainApp = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.appBg }]}>
       <StatusBar barStyle={barStyle} />
       <NavigationContainer>
-        {user
-          ? <TabNavigator />
-          : <StackNavigator />
-        }
+        {user ? <TabNavigator /> : <StackNavigator />}
       </NavigationContainer>
-      {showLoad.show && <GlobalLoader /> }
+      {showLoad.show && <GlobalLoader />}
       {popup.show && <Popup data={popup.data} />}
     </View>
-  )
-}
+  );
+};
 
 const App = () => {
   return (
-    <PopupProvider>
-      <AuthProvider>
-        <LoaderProvider>
-          <MainApp />
-        </LoaderProvider>
-      </AuthProvider>
-    </PopupProvider>
-  )
-}
+    <ThemeProvider>
+      <PopupProvider>
+        <AuthProvider>
+          <LoaderProvider>
+            <MainApp />
+          </LoaderProvider>
+        </AuthProvider>
+      </PopupProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;
 
@@ -59,6 +59,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: colors.appBg,
-  }
-})
+  },
+});

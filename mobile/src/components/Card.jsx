@@ -1,22 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors } from '../constants/colors';
 import { fonts } from '../constants/fontSize';
+import { useTheme } from '../context/Theme.context';
 
 const Card = ({ item, handleDelete, onPress }) => {
+  const colors = useTheme();
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
-      <View style={styles.card}>
+    <TouchableOpacity
+      style={[styles.cardContainer, { backgroundColor: colors.cardBg }]}
+      onPress={onPress}
+    >
+      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text
             style={{
-              fontSize: fonts.head.secondary.light,
+              fontSize: 18,
               fontFamily: 'Lato-Bold',
+              color: colors.textPrimary,
             }}
           >
             {item.name}
           </Text>
-          <View style={styles.info}>
+          <View style={[styles.info, { backgroundColor: colors.accent }]}>
             <View
               style={{
                 width: 8,
@@ -31,10 +36,17 @@ const Card = ({ item, handleDelete, onPress }) => {
           </View>
         </View>
         <View style={{ gap: 5, paddingLeft: 20 }}>
-          <Text>Size : {item.size}</Text>
-          <Text>Location : {item.location}</Text>
+          <Text style={{ color: colors.textSecondary }}>
+            Size : {item.size}
+          </Text>
+          <Text style={{ color: colors.textSecondary }}>
+            Location : {item.location}
+          </Text>
         </View>
-        <TouchableOpacity style={styles.btn} onPress={() => handleDelete(item)}>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: colors.error }]}
+          onPress={() => handleDelete(item)}
+        >
           <Text
             style={{
               fontFamily: 'Lato-Bold',
@@ -57,7 +69,6 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 0.3,
     borderRadius: 10,
-    backgroundColor: colors.cardBg,
     shadowRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -65,14 +76,12 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 10,
-    backgroundColor: colors.cardBg,
     gap: 16,
     paddingHorizontal: 20,
     paddingVertical: 15,
   },
   btn: {
     paddingVertical: 5,
-    backgroundColor: colors.error,
     borderRadius: 50,
     width: '30%',
     alignSelf: 'flex-end',
@@ -81,12 +90,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     flexDirection: 'row',
     borderRadius: 50,
-    backgroundColor: colors.accent,
     gap: 5,
   },
   infoText: {
     fontFamily: 'OpenSans-Regular',
-    color: colors.textPrimary,
     fontSize: fonts.text.caption,
     marginTop: 2,
   },

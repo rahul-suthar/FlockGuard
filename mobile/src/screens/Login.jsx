@@ -8,15 +8,16 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { colors } from '../constants/colors.js';
 import { fonts } from '../constants/fontSize.js';
 import { handleLogin } from '../apis/auth.js';
 import { useCustomState } from '../hooks/state.js';
 import { useAuth } from '../context/Auth.context.js';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
+import { useTheme } from '../context/Theme.context.js';
 
 const Login = ({ navigation }) => {
+  const colors = useTheme();
   const { setUser } = useAuth();
   const { showPopup } = usePopup();
   const { setShowLoad } = useLoader();
@@ -45,16 +46,21 @@ const Login = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.appBg }]}>
         <Image
           style={styles.img}
           source={require('../assets/images/logo.png')}
         />
         <View style={styles.form}>
-          <Text style={styles.headText}>Login</Text>
+          <Text style={[styles.headText, { color: colors.textPrimary }]}>
+            Login
+          </Text>
           <View style={{ gap: 30 }}>
             <TextInput
-              style={styles.inputs}
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
               placeholder="email"
               value={logForm.email}
               onChangeText={text => handleDataChange('email', text)}
@@ -62,7 +68,10 @@ const Login = ({ navigation }) => {
               autoCapitalize="none"
             />
             <TextInput
-              style={styles.inputs}
+              style={[
+                styles.inputs,
+                { backgroundColor: colors.input, color: colors.textPrimary },
+              ]}
               placeholder="password"
               value={logForm.password}
               onChangeText={text => handleDataChange('password', text)}
@@ -73,17 +82,23 @@ const Login = ({ navigation }) => {
           </View>
           <View style={styles.btns}>
             <TouchableOpacity
-              style={styles.mainBtn}
+              style={[styles.mainBtn, { backgroundColor: colors.primary }]}
               onPress={() => handleSubmit()}
             >
-              <Text style={styles.mainText}>Login</Text>
+              <Text style={[styles.mainText, { color: colors.textWhite }]}>
+                Login
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.secBtn}
               onPress={() => navigation.navigate('Register')}
             >
-              <Text style={styles.text}>New User?</Text>
-              <Text style={styles.secText}>Register</Text>
+              <Text style={[styles.text, { color: colors.textSecondary }]}>
+                New User?
+              </Text>
+              <Text style={[styles.secText, { color: colors.primary }]}>
+                Register
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -99,7 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.appBg,
     position: 'relative',
     gap: 30,
   },
@@ -116,24 +130,20 @@ const styles = StyleSheet.create({
   headText: {
     fontSize: fonts.head.primary,
     fontFamily: 'Lato-Bold',
-    color: colors.textPrimary,
   },
   inputs: {
-    backgroundColor: colors.input,
     width: 300,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 50,
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.primary,
-    color: colors.textPrimary,
   },
   btns: {
     alignItems: 'center',
     gap: 20,
   },
   mainBtn: {
-    backgroundColor: colors.primary,
     width: 280,
     alignItems: 'center',
     padding: 10,
@@ -142,7 +152,6 @@ const styles = StyleSheet.create({
   mainText: {
     fontSize: fonts.btn.primary,
     fontFamily: 'Lato-Bold',
-    color: colors.textWhite,
   },
   secBtn: {
     flexDirection: 'row',
@@ -154,6 +163,5 @@ const styles = StyleSheet.create({
   secText: {
     fontSize: fonts.text.primary,
     fontFamily: 'Lato-Bold',
-    color: colors.primary,
   },
 });

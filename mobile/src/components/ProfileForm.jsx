@@ -6,55 +6,72 @@ import {
   View,
 } from 'react-native';
 import { fonts } from '../constants/fontSize';
-import { useCustomState } from '../hooks/state';
-import { farmOptions } from '../constants/options.js';
-import { addFarm } from '../apis/user.js';
+import { useCustomState } from '../hooks/state.js';
 import { usePopup } from '../context/Popup.context.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLoader } from '../context/Loader.context.js';
+import { useAuth } from '../context/Auth.context.js';
 import { useTheme } from '../context/Theme.context.js';
 
-const formData = {
-  name: '',
-  size: 0,
-  location: '',
-  type: '',
-};
-
-const FarmInput = ({ setFarms, setOpenForm }) => {
-  const [form, setForm, resetForm] = useCustomState(formData);
+const ProfileForm = ({ setOpenForm }) => {
+  const colors = useTheme();
+  const { user, setUser } = useAuth();
+  const [form, setForm, resetForm] = useCustomState({
+    name: user.name,
+    phone: {
+      code: +91,
+      mobileNo: user.phone.mobileNo,
+    },
+    language: user.language,
+  });
   const { setShowLoad } = useLoader();
   const { showPopup } = usePopup();
-  const colors = useTheme();
 
   const handleDataChange = (field, text) => {
-    setForm(prev => ({ ...prev, [field]: text }));
+    if (field === 'mobileNo') {
+      setForm(prev => ({
+        ...prev,
+        phone: {
+          ...prev.phone,
+          mobileNo: Number(text),
+        },
+      }));
+    } else {
+      setForm(prev => ({ ...prev, [field]: text }));
+    }
   };
 
-  const updateFarms = async () => {
-    const newFarm = await addFarm(form, showPopup);
-    setFarms(prev => {
-      const updatedFarms = [...prev, newFarm];
-      AsyncStorage.setItem('farms', JSON.stringify(updatedFarms));
-      return updatedFarms;
+  const updateUser = () => {
+    setUser(prev => {
+      const updatedUser = { ...prev, ...form };
+      AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
     });
   };
 
   const handleSubmit = async () => {
-    if (!form.name.trim() || !form.location.trim() || !form.type.trim()) {
+    if (
+      form.name == user.name &&
+      form.phone.mobileNo == user.phone.mobileNo &&
+      form.language == user.language
+    ) {
+      setOpenForm(false);
+      return;
+    }
+    if (!form.name.trim() || !form.language.trim()) {
       showPopup({
         success: false,
-        msg: 'All fields are required.',
+        msg: 'Insufficient Data',
       });
       return;
     }
-    if (form.size <= 0) {
-      showPopup({ success: false, msg: 'Size must be greater than 0.' });
+    if (form.phone.mobileNo <= 999999999) {
+      showPopup({ success: false, msg: 'Invalid Mobile Number.' });
       return;
     }
-    setShowLoad({ show: true, msg: 'Adding Farm' });
+    setShowLoad({ show: true, msg: 'Updating user info' });
     try {
-      await updateFarms();
+      await updateUser();
       setOpenForm(false);
       resetForm();
     } finally {
@@ -65,9 +82,9 @@ const FarmInput = ({ setFarms, setOpenForm }) => {
   return (
     <View style={[styles.form, { backgroundColor: colors.appBg }]}>
       <Text style={[styles.formHead, { color: colors.textPrimary }]}>
-        Farm Details
+        Edit Profile
       </Text>
-      <View style={{ gap: 18, width: '90%' }}>
+      <View style={{ gap: 24, width: '90%' }}>
         <TextInput
           placeholderTextColor={colors.textSecondary}
           value={form.name}
@@ -80,73 +97,41 @@ const FarmInput = ({ setFarms, setOpenForm }) => {
         />
         <TextInput
           placeholderTextColor={colors.textSecondary}
-          value={form.size}
-          placeholder="Size"
+          value={String(form.phone.mobileNo)}
+          placeholder="Mobile No."
           style={[
             styles.input,
             { backgroundColor: colors.input, color: colors.textPrimary },
           ]}
           keyboardType="numeric"
-          onChangeText={num => handleDataChange('size', Number(num))}
+          onChangeText={num => handleDataChange('mobileNo', num)}
         />
         <TextInput
           placeholderTextColor={colors.textSecondary}
-          value={form.location}
-          placeholder="Location"
+          value={form.language}
+          placeholder="Language"
           style={[
             styles.input,
             { backgroundColor: colors.input, color: colors.textPrimary },
           ]}
-          onChangeText={text => handleDataChange('location', text)}
+          onChangeText={text => handleDataChange('language', text)}
         />
-
-        <View style={styles.radioToggle}>
-          {farmOptions.map((type, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.radio,
-                {
-                  backgroundColor:
-                    form.type === type ? colors.accent : colors.disabled,
-                  elevation: form.type === type ? 1 : 0,
-                },
-              ]}
-              onPress={() =>
-                form.type !== type
-                  ? handleDataChange('type', type)
-                  : handleDataChange('type', '')
-              }
-            >
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontFamily: 'Lato-Bold',
-                  textTransform: 'capitalize',
-                  color: form.type === type ? '' :  colors.textSecondary
-                }}
-              >
-                {type}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
 
         <View style={styles.btnContainer}>
           <TouchableOpacity
-            style={[styles.btn, { backgroundColor: colors.disabled }]}
+            style={[styles.actionBtn, { backgroundColor: colors.accent }]}
             onPress={() => setOpenForm(false)}
           >
-            <Text style={[styles.btnText, { color: colors.textSecondary }]}>
+            <Text style={[styles.actionText, { color: colors.appBg }]}>
               close
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.btn, { backgroundColor: colors.primary }]}
-            onPress={handleSubmit}
+            style={[styles.actionBtn, { backgroundColor: colors.primary }]}
+            onPress={() => handleSubmit()}
           >
-            <Text style={[styles.btnText, { color: colors.textWhite }]}>
-              Add
+            <Text style={[styles.actionText, { color: colors.textWhite }]}>
+              Update
             </Text>
           </TouchableOpacity>
         </View>
@@ -155,7 +140,7 @@ const FarmInput = ({ setFarms, setOpenForm }) => {
   );
 };
 
-export default FarmInput;
+export default ProfileForm;
 
 const styles = StyleSheet.create({
   form: {
@@ -163,6 +148,7 @@ const styles = StyleSheet.create({
     height: 400,
     position: 'absolute',
     top: 120,
+    left: 40,
     padding: 10,
     borderRadius: 20,
     borderWidth: 0.7,
@@ -170,7 +156,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.7,
     alignItems: 'center',
     justifyContent: 'space-around',
-    gap: 16,
     elevation: 5,
   },
   formHead: {
@@ -186,28 +171,19 @@ const styles = StyleSheet.create({
     fontSize: fonts.text.primary,
   },
   btnContainer: {
-    marginTop: 12,
+    marginTop: 18,
     flexDirection: 'row',
     justifyContent: 'space-around',
     gap: 12,
   },
-  btn: {
+  actionBtn: {
     flex: 0.45,
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
   },
-  btnText: {
+  actionText: {
     fontFamily: 'Lato-Bold',
     fontSize: fonts.text.primary,
-  },
-  radio: {
-    paddingVertical: 8,
-    borderRadius: 20,
-    flex: 0.45,
-  },
-  radioToggle: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
   },
 });

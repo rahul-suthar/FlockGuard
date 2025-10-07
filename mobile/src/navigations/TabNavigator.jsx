@@ -2,13 +2,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home.jsx';
 import Profile from '../screens/Profile.jsx';
 import TabBar from '../components/TabBar.jsx'
-import { colors } from '../constants/colors.js';
 import { fonts } from '../constants/fontSize.js';
+import { useTheme } from '../context/Theme.context.js';
 
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const colors = useTheme();
   return (
     <Tab.Navigator
       tabBar={props => <TabBar {...props} />}
@@ -18,6 +19,7 @@ const TabNavigator = () => {
           backgroundColor: colors.appBg,
           shadowOpacity: 0,
           borderBottomWidth: 0,
+          shadowColor: 'transparent',
         },
         headerTitleStyle: {
           fontFamily: 'Lato-Bold',
