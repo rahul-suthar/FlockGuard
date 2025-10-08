@@ -126,6 +126,22 @@ const loginUser = asyncHandler(async (req, res) => {
         );
 });
 
+const updateUser = asyncHandler(async (req, res) => {
+    const updates = req.body;
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!updatedUser) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, updatedUser, "user updated successfully"));
+});
+
 const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
@@ -182,4 +198,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         );
 });
 
-export { getAllUsers, registerUser, loginUser, logoutUser, refreshAccessToken };
+export {
+    getAllUsers,
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    updateUser,
+};

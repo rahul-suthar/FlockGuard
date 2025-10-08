@@ -24,6 +24,10 @@ import reportRouter from "./routes/report.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import { ApiError } from "./utils/ApiError.js";
 
+app.get("/api/v1/health", (req, res) => {
+    res.status(200).json({ health: "ok", time: Date.now() });
+});
+
 app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/farms", verifyJWT, authorizeRoles("farmer"), farmRouter);
