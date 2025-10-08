@@ -2,8 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FARM_API_URL } from '@env';
 
-
-const fetchFarms = async (showPopup) => {
+const fetchFarms = async showPopup => {
   try {
     const token = await AsyncStorage.getItem('accessToken');
     const response = await axios.get(FARM_API_URL, {
@@ -35,4 +34,20 @@ const addFarm = async (form, showPopup) => {
   }
 };
 
-export { fetchFarms, addFarm };
+const deleteFarm = async (farmId, showPopup) => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken');
+    const response = await axios.delete(`${FARM_API_URL}/${farmId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    showPopup({ success: true, msg: 'Farm deleted' });
+    return response.data.data;
+  } catch (err) {
+    showPopup({ success: false, msg: 'Failed to delete' });
+    throw err;
+  }
+};
+
+export { fetchFarms, addFarm, deleteFarm };

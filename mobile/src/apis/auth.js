@@ -35,12 +35,8 @@ const handleLogOut = async (setUser, showPopup, setShowLoad) => {
 
   setShowLoad({ show: true, msg: 'Removing cached data' });
 
-  await AsyncStorage.multiRemove([
-    'user',
-    'accessToken',
-    'refreshToken',
-  ]);
-  
+  await AsyncStorage.multiRemove(['user', 'accessToken', 'refreshToken']);
+
   const farmString = await AsyncStorage.getItem('farms');
   if (farmString) await AsyncStorage.removeItem('farms');
 
@@ -49,4 +45,26 @@ const handleLogOut = async (setUser, showPopup, setShowLoad) => {
   setShowLoad({ show: false, msg: '' });
 };
 
-export { handleRegister, handleLogin, handleLogOut };
+const updateUser = async (form, showPopup, setUser) => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken');
+    const res = await axios.put(`${AUTH_API_URL}/me`, form, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    const { user } = res?.data?.data;
+    console.log(user);
+    setUser(user);
+    await AsyncStorage.setItem('user', JSON.stringify(user));
+    showPopup({ success: true, msg: 'Profile Updated!...' });
+    return;
+  } catch (err) {
+    console.log(err);
+    showPopup({ success: false, msg: 'Failed to Update' });
+    throw err;
+  }
+};
+
+export { handleRegister, handleLogin, handleLogOut, updateUser };

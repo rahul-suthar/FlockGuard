@@ -17,7 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FarmInput from '../components/FarmInput.jsx';
 import { BlurView } from '@react-native-community/blur';
 import Card from '../components/Card.jsx';
-import { fetchFarms } from '../apis/user.js';
+import { deleteFarm, fetchFarms } from '../apis/user.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
@@ -89,9 +89,18 @@ const Home = () => {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            const updatedFarms = farms.filter(f => f._id !== item._id);
-            setFarms(updatedFarms);
-            await AsyncStorage.setItem('farms', JSON.stringify(updatedFarms));
+            try {
+              setShowLoad({ show: true, msg: 'Deleting farm...' });
+              await deleteFarm(item._id, showPopup);
+              const updatedFarms = farms.filter(f => f._id !== item._id);
+              setFarms(updatedFarms);
+              await AsyncStorage.setItem('farms', JSON.stringify(updatedFarms));
+            } catch (err) {
+              console.log(err);
+              showPopup({ success: false, msg: 'Unable to delete' });
+            } finally {
+              setShowLoad({ show: false, msg: '' });
+            }
           },
         },
       ],

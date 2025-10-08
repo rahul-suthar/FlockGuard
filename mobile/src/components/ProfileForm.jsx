@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLoader } from '../context/Loader.context.js';
 import { useAuth } from '../context/Auth.context.js';
 import { useTheme } from '../context/Theme.context.js';
+import { updateUser } from '../apis/auth.js';
 
 const ProfileForm = ({ setOpenForm }) => {
   const colors = useTheme();
@@ -41,14 +42,6 @@ const ProfileForm = ({ setOpenForm }) => {
     }
   };
 
-  const updateUser = () => {
-    setUser(prev => {
-      const updatedUser = { ...prev, ...form };
-      AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-      return updatedUser;
-    });
-  };
-
   const handleSubmit = async () => {
     if (
       form.name == user.name &&
@@ -71,7 +64,7 @@ const ProfileForm = ({ setOpenForm }) => {
     }
     setShowLoad({ show: true, msg: 'Updating user info' });
     try {
-      await updateUser();
+      await updateUser(form, showPopup, setUser);
       setOpenForm(false);
       resetForm();
     } finally {
