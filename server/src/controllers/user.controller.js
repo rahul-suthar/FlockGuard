@@ -139,7 +139,13 @@ const updateUser = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(new ApiResponse(200, updatedUser, "user updated successfully"));
+        .json(
+            new ApiResponse(
+                200,
+                { user: updatedUser },
+                "user updated successfully"
+            )
+        );
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
