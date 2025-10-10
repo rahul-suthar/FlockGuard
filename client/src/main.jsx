@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Terms from "./pages/Terms.jsx";
 import Privacy from "./pages/Privacy.jsx";
+import { Analytics } from '@vercel/analytics/react';
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -15,5 +16,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="/*" element={<App />} />
       </Routes>
     </BrowserRouter>
+    <Analytics/>
   </StrictMode>
 );
