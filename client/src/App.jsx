@@ -1,14 +1,12 @@
-import { useState } from 'react'
+import { useState } from "react";
+import Onboarding from "./pages/Onboarding";
 
 function App() {
-
   return (
-    <>
-      <div className='flex p-5 h-screen items-start justify-center bg-blue-200'>
-        <h1><span className='text-4xl font-bold text-black'>BioFarm</span><span className='text-3xl'> - safer farms, stroger livelihoods</span></h1>
-      </div>
-    </>
-  )
+    <div className="h-screen px-2 font-mono">
+      <Onboarding/>
+    </div>
+  );
 }
 
-export default App
+export default App;
