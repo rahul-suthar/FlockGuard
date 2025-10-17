@@ -44,24 +44,22 @@ const Profile = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={[styles.root, { backgroundColor: colors.appBg }]}>
-        <View style={styles.header}>
-          <View style={[styles.avatarWrap, { backgroundColor: colors.accent }]}>
-            <Text style={[styles.avatarText, { color: colors.textWhite }]}>
-              {user.name ? user.name.charAt(0).toUpperCase() : '?'}
-            </Text>
-          </View>
-          <View style={styles.nameBlock}>
-            <Text style={[styles.name, { color: colors.textPrimary }]}>
-              {user.name}
-            </Text>
-            <Text style={[styles.role, { color: colors.textSecondary }]}>
-              {user.role?.toUpperCase() || 'FARMER'}
-            </Text>
-          </View>
+        <View style={[styles.avatarWrap, { backgroundColor: colors.accent }]}>
+          <Text style={[styles.avatarText, { color: colors.textWhite }]}>
+            {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+          </Text>
         </View>
 
         <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
           <View style={styles.infoList}>
+            <View style={styles.infoRow}>
+              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+                Name
+              </Text>
+              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
+                {user.name}
+              </Text>
+            </View>
             <View style={styles.infoRow}>
               <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
                 Farms
@@ -111,7 +109,11 @@ const Profile = () => {
               style={[styles.actionBtn, { backgroundColor: colors.input }]}
               onPress={() => setOpenForm(true)}
             >
-              <Text style={[styles.actionText, {color: colors.textSecondary}]}>Edit Profile</Text>
+              <Text
+                style={[styles.actionText, { color: colors.textSecondary }]}
+              >
+                Edit Profile
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -159,13 +161,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
   avatarWrap: {
-    width: 92,
+    width: 106,
     height: 92,
     borderRadius: 46,
     justifyContent: 'center',
@@ -175,26 +172,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 10,
+    left: '36%',
   },
   avatarText: {
     fontSize: 36,
     fontFamily: 'Lato-Bold',
   },
-  nameBlock: {
-    flex: 1,
-  },
-  name: {
-    fontSize: fonts.head.primary,
-    fontFamily: 'Lato-Bold',
-  },
-  role: {
-    marginTop: 4,
-    fontSize: fonts.text.primary,
-    fontFamily: 'OpenSans-Regular',
-  },
-
   card: {
-    marginTop: 24,
+    marginTop: -18,
     borderRadius: 16,
     padding: 16,
     elevation: 3,
@@ -238,7 +223,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontFamily: 'Lato-Bold',
-    fontSize: 16
+    fontSize: 16,
   },
   footerNote: {
     marginTop: 20,

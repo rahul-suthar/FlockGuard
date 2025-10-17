@@ -39,6 +39,8 @@ const handleLogOut = async (setUser, showPopup, setShowLoad) => {
 
   const farmString = await AsyncStorage.getItem('farms');
   if (farmString) await AsyncStorage.removeItem('farms');
+  const reportString = await AsyncStorage.getItem('reports');
+  if (reportString) await AsyncStorage.removeItem('reports');
 
   setUser(null);
   showPopup({ success: true, msg: 'Logged out' });

@@ -2,13 +2,14 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fonts } from '../constants/fontSize';
 import { useTheme } from '../context/Theme.context';
+import FeatherIcon from 'react-native-vector-icons/Feather.js';
 
-const Card = ({ item, handleDelete, onPress }) => {
+const Card = ({ item, handleDelete, navigation }) => {
   const colors = useTheme();
   return (
     <TouchableOpacity
       style={[styles.cardContainer, { backgroundColor: colors.cardBg }]}
-      onPress={onPress}
+      onPress={() => navigation.navigate('Details', { item: item })}
     >
       <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -21,18 +22,17 @@ const Card = ({ item, handleDelete, onPress }) => {
           >
             {item.name}
           </Text>
-          <View style={[styles.info, { backgroundColor: colors.accent }]}>
-            <View
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 50,
-                backgroundColor:
-                  item.type === 'Pig' ? colors.pigType : colors.henType,
-                alignSelf: 'center',
-              }}
-            />
-            <Text style={styles.infoText}>{item.type}</Text>
+          <View
+            style={[
+              styles.info,
+              {
+                backgroundColor: colors.accent,
+              },
+            ]}
+          >
+            <Text style={styles.infoText}>
+              {item.type === 'pig' ? '🐷' : '🐔'}
+            </Text>
           </View>
         </View>
         <View style={{ gap: 5, paddingLeft: 20 }}>
@@ -44,13 +44,14 @@ const Card = ({ item, handleDelete, onPress }) => {
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.btn, { backgroundColor: colors.error }]}
+          style={[styles.btn, { borderColor: colors.error, backgroundColor: colors.bgerror }]}
           onPress={() => handleDelete(item)}
         >
+          <FeatherIcon size={18} name="trash-2" color={colors.error} />
           <Text
             style={{
               fontFamily: 'Lato-Bold',
-              color: colors.textWhite,
+              color: colors.error,
               textAlign: 'center',
             }}
           >
@@ -85,16 +86,22 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     width: '30%',
     alignSelf: 'flex-end',
+    borderWidth: 0.4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    elevation: 0.8,
   },
   info: {
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    borderRadius: 50,
-    gap: 5,
+    borderRadius: 16,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    overflow: 'hidden',
   },
   infoText: {
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.caption,
-    marginTop: 2,
+    fontSize: 24,
   },
 });

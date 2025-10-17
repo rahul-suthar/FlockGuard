@@ -8,17 +8,12 @@ const TabBar = ({ state, descriptors, navigation }) => {
     <View
       style={[
         styles.container,
-        { borderColor: colors.primary, backgroundColor: colors.appBg },
+        { backgroundColor: colors.cardBg },
       ]}
     >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
+        const label = route.name === 'Profile' ? 'Profile' : 'Home';
 
         const isFocused = state.index === index;
 
@@ -34,7 +29,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
           }
         };
 
-        const iconName = route.name === 'Home' ? 'home' : 'person';
+        const iconName = route.name === 'Profile' ? 'person' : 'home';
 
         return (
           <TouchableOpacity
@@ -74,17 +69,10 @@ export default TabBar;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: 64,
-    borderWidth: 0.3,
-    borderRadius: 20,
-    position: 'absolute',
-    bottom: 24,
-    left: 110,
-    right: 110,
-    elevation: 2,
-    shadowRadius: 20,
+    height: 68,
+    paddingBottom: 8,
   },
   tab: {
     alignItems: 'center',

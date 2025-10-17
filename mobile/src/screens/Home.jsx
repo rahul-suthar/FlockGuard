@@ -17,7 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FarmInput from '../components/FarmInput.jsx';
 import { BlurView } from '@react-native-community/blur';
 import Card from '../components/Card.jsx';
-import { deleteFarm, fetchFarms } from '../apis/user.js';
+import { deleteFarm, fetchFarms } from '../apis/farm.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
@@ -25,7 +25,7 @@ import { useTheme } from '../context/Theme.context.js';
 
 const filters = ['All', 'Pig', 'Poultry'];
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const [farms, setFarms] = useState([]);
   const [currFilter, setCurrFilter] = useState('All');
   const [filteredFarm, setfilteredFarm] = useState([]);
@@ -164,7 +164,7 @@ const Home = () => {
         <View
           style={{
             width: '90%',
-            height: '82%',
+            height: '96%',
             backgroundColor: 'transparent',
             justifyContent: 'center',
           }}
@@ -183,11 +183,11 @@ const Home = () => {
             <FlatList
               data={filteredFarm}
               renderItem={({ item }) => (
-                <Card item={item} handleDelete={handleDelete} />
+                <Card item={item} handleDelete={handleDelete} navigation={navigation} />
               )}
               contentContainerStyle={{
                 gap: 22,
-                paddingBottom: 10,
+                paddingBottom: 72,
                 backgroundColor: colors.appBg,
               }}
               keyExtractor={item => item._id.toString()}
@@ -260,11 +260,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   addBtn: {
-    width: 50,
-    height: 50,
+    width: 56,
+    height: 56,
     position: 'absolute',
-    right: 24,
-    bottom: 32,
+    right: 18,
+    bottom: 14,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',

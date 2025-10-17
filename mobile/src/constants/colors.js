@@ -9,7 +9,8 @@ const colors = {
   textSecondary: 'hsl(210, 3%, 24%)',
   textWhite: 'hsl(0, 0%, 100%)',
   success: 'hsl(139, 40%, 59%)',
-  error: 'hsl(8, 71%, 55%)', 
+  error: 'hsl(8, 71%, 55%)',
+  bgerror: 'hsl(8, 71%, 90%)',
   warning: 'hsl(38, 100%, 66%)',
   disabled: 'hsl(0, 0%, 85%)',
   input: 'hsl(0, 0%, 89%)',
@@ -27,10 +28,10 @@ const colorsDark = {
   textWhite: 'hsl(0, 0%, 100%)',
   success: 'hsl(139, 40%, 59%)',
   error: 'hsl(8, 71%, 55%)',
+  bgerror: 'hsl(8, 71%, 90%)',
   warning: 'hsl(38, 100%, 66%)',
   disabled: 'hsl(0, 0%, 20%)',
-  input: 'hsl(0, 0%, 17%)'
+  input: 'hsl(0, 0%, 17%)',
 };
-
 
 export { colors, colorsDark };

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   popup: {
     position: 'absolute',
     alignSelf: 'center',
-    bottom: 90,
+    top: 90,
     minWidth: 200,
     borderRadius: 25,
     paddingVertical: 10,

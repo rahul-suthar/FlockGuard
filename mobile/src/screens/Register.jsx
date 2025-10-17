@@ -13,6 +13,8 @@ import { useCustomState } from '../hooks/state.js';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
 import { useTheme } from '../context/Theme.context.js';
+import { useState } from 'react';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 
 const Register = ({ navigation }) => {
   const colors = useTheme();
@@ -28,6 +30,8 @@ const Register = ({ navigation }) => {
     },
     role: 'farmer',
   });
+  const [shiftLayout, setShiftLayout] = useState(false);
+  const [showPass, setShowPass] = useState(false);
 
   const handleDataChange = (field, text) => {
     if (field === 'mobileNo') {
@@ -70,9 +74,22 @@ const Register = ({ navigation }) => {
     }
   };
 
+  const changeLayout = () => {
+    Keyboard.dismiss();
+    setShiftLayout(false);
+  };
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={[styles.container, { backgroundColor: colors.appBg }]}>
+    <TouchableWithoutFeedback onPress={changeLayout} accessible={false}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.appBg,
+            justifyContent: shiftLayout ? 'flex-start' : 'center',
+          },
+        ]}
+      >
         <View style={styles.form}>
           <Text style={[styles.headText, { color: colors.textPrimary }]}>
             Register
@@ -88,6 +105,7 @@ const Register = ({ navigation }) => {
               onChangeText={text => handleDataChange('name', text)}
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
+              onPress={() => setShiftLayout(true)}
             />
             <TextInput
               style={[
@@ -100,19 +118,37 @@ const Register = ({ navigation }) => {
               onChangeText={text => handleDataChange('email', text)}
               autoCapitalize="none"
               keyboardType="email-address"
+              onPress={() => setShiftLayout(true)}
             />
-            <TextInput
-              style={[
-                styles.inputs,
-                { backgroundColor: colors.input, color: colors.textPrimary },
-              ]}
-              placeholder="password"
-              value={regForm.password}
-              onChangeText={text => handleDataChange('password', text)}
-              placeholderTextColor={colors.textSecondary}
-              autoCapitalize="none"
-              secureTextEntry={true}
-            />
+            <View>
+              <TextInput
+                style={[
+                  styles.inputs,
+                  {
+                    backgroundColor: colors.input,
+                    color: colors.textPrimary,
+                    paddingRight: 52,
+                  },
+                ]}
+                placeholder="password"
+                value={regForm.password}
+                onChangeText={text => handleDataChange('password', text)}
+                placeholderTextColor={colors.textSecondary}
+                autoCapitalize="none"
+                secureTextEntry={!showPass}
+                onPress={() => setShiftLayout(true)}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPass(prev => !prev)}
+              >
+                <FontAwesome5
+                  color={colors.textPrimary}
+                  size={18}
+                  name={showPass ? 'eye' : 'eye-slash'}
+                />
+              </TouchableOpacity>
+            </View>
             <TextInput
               style={[
                 styles.inputs,
@@ -126,6 +162,7 @@ const Register = ({ navigation }) => {
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
               keyboardType="numeric"
+              onPress={() => setShiftLayout(true)}
             />
           </View>
           <View style={styles.btns}>
@@ -139,9 +176,14 @@ const Register = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.secBtn}
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                setShiftLayout(false);
+                navigation.goBack();
+              }}
             >
-              <Text style={[styles.text, { color: colors.textSecondary}]}>Already a User?</Text>
+              <Text style={[styles.text, { color: colors.textSecondary }]}>
+                Already a User?
+              </Text>
               <Text style={[styles.secText, { color: colors.primary }]}>
                 Login
               </Text>
@@ -158,10 +200,10 @@ export default Register;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 30,
     position: 'relative',
+    paddingVertical: '18%',
   },
   form: {
     width: 300,
@@ -174,11 +216,18 @@ const styles = StyleSheet.create({
   },
   inputs: {
     width: 300,
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 50,
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.primary,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 6,
+    padding: 8,
+    borderRadius: 14,
   },
   btns: {
     alignItems: 'center',
@@ -197,7 +246,7 @@ const styles = StyleSheet.create({
   secBtn: {
     flexDirection: 'row',
     gap: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   text: {
     fontSize: fonts.text.primary,

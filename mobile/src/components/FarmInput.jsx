@@ -8,7 +8,7 @@ import {
 import { fonts } from '../constants/fontSize';
 import { useCustomState } from '../hooks/state';
 import { farmOptions } from '../constants/options.js';
-import { addFarm } from '../apis/user.js';
+import { addFarm } from '../apis/farm.js';
 import { usePopup } from '../context/Popup.context.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLoader } from '../context/Loader.context.js';

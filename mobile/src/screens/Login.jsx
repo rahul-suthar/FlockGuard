@@ -15,6 +15,8 @@ import { useAuth } from '../context/Auth.context.js';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
 import { useTheme } from '../context/Theme.context.js';
+import { useState } from 'react';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 
 const Login = ({ navigation }) => {
   const colors = useTheme();
@@ -25,6 +27,8 @@ const Login = ({ navigation }) => {
     email: '',
     password: '',
   });
+  const [showImg, setShowImg] = useState(true);
+  const [showPass, setShowPass] = useState(false);
 
   const handleDataChange = (field, text) => {
     setLogForm(prev => ({ ...prev, [field]: text }));
@@ -44,11 +48,16 @@ const Login = ({ navigation }) => {
     }
   };
 
+  const changeLayout = () => {
+    Keyboard.dismiss();
+    setShowImg(true);
+  };
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <TouchableWithoutFeedback onPress={changeLayout} accessible={false}>
       <View style={[styles.container, { backgroundColor: colors.appBg }]}>
         <Image
-          style={styles.img}
+          style={[styles.img, { display: showImg ? '' : 'none' }]}
           source={require('../assets/images/logo.png')}
         />
         <View style={styles.form}>
@@ -66,19 +75,37 @@ const Login = ({ navigation }) => {
               onChangeText={text => handleDataChange('email', text)}
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
+              onPress={() => setShowImg(false)}
             />
-            <TextInput
-              style={[
-                styles.inputs,
-                { backgroundColor: colors.input, color: colors.textPrimary },
-              ]}
-              placeholder="password"
-              value={logForm.password}
-              onChangeText={text => handleDataChange('password', text)}
-              placeholderTextColor={colors.textSecondary}
-              secureTextEntry={true}
-              autoCapitalize="none"
-            />
+            <View>
+              <TextInput
+                style={[
+                  styles.inputs,
+                  {
+                    backgroundColor: colors.input,
+                    color: colors.textPrimary,
+                    paddingRight: 52,
+                  },
+                ]}
+                placeholder="password"
+                value={logForm.password}
+                onChangeText={text => handleDataChange('password', text)}
+                placeholderTextColor={colors.textSecondary}
+                secureTextEntry={!showPass}
+                autoCapitalize="none"
+                onPress={() => setShowImg(false)}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPass(prev => !prev)}
+              >
+                <FontAwesome5
+                  color={colors.textPrimary}
+                  size={18}
+                  name={showPass ? 'eye' : 'eye-slash'}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.btns}>
             <TouchableOpacity
@@ -91,7 +118,10 @@ const Login = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.secBtn}
-              onPress={() => navigation.navigate('Register')}
+              onPress={() => {
+                setShowImg(true);
+                navigation.navigate('Register');
+              }}
             >
               <Text style={[styles.text, { color: colors.textSecondary }]}>
                 New User?
@@ -112,10 +142,10 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
     gap: 30,
+    paddingVertical: '24%',
   },
   img: {
     width: 250,
@@ -133,11 +163,18 @@ const styles = StyleSheet.create({
   },
   inputs: {
     width: 300,
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 50,
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.primary,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 6,
+    padding: 8,
+    borderRadius: 14,
   },
   btns: {
     alignItems: 'center',

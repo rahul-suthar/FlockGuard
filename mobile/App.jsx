@@ -1,4 +1,10 @@
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import {
+  Modal,
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from 'react-native';
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './src/navigations/StackNavigator.jsx';
@@ -10,6 +16,8 @@ import { LoaderProvider, useLoader } from './src/context/Loader.context.js';
 import { ThemeProvider, useTheme } from './src/context/Theme.context.js';
 import Popup from './src/components/Popup.jsx';
 import GlobalLoader from './src/components/Loader.jsx';
+import CameraView from './src/components/CameraView.jsx';
+import { CameraProvier, useCamera } from './src/context/Camera.context.js';
 
 const MainApp = () => {
   const { user, setUser } = useAuth();
@@ -18,6 +26,8 @@ const MainApp = () => {
   const theme = useColorScheme();
   const colors = useTheme();
   const barStyle = theme === 'light' ? 'dark-content' : 'light-content';
+
+  const { showCamera, closeCamera, onPhotoTaken } = useCamera();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,6 +45,15 @@ const MainApp = () => {
       </NavigationContainer>
       {showLoad.show && <GlobalLoader />}
       {popup.show && <Popup data={popup.data} />}
+      <Modal visible={showCamera} animationType="slide" transparent={false}>
+        <CameraView
+          onPhotoTaken={photo => {
+            onPhotoTaken(photo);
+            closeCamera();
+          }}
+          onClose={closeCamera}
+        />
+      </Modal>
     </View>
   );
 };
@@ -45,7 +64,9 @@ const App = () => {
       <PopupProvider>
         <AuthProvider>
           <LoaderProvider>
-            <MainApp />
+            <CameraProvier>
+              <MainApp />
+            </CameraProvier>
           </LoaderProvider>
         </AuthProvider>
       </PopupProvider>

@@ -60,7 +60,10 @@ const getReportById = asyncHandler(async (req, res) => {
     const filter = { _id: req.params.rid };
 
     if (req.user.role === "farmer") {
-        const farm = await Farm.findOne({ _id: req.params.id, owner: req.user._id });
+        const farm = await Farm.findOne({
+            _id: req.params.id,
+            owner: req.user._id,
+        });
         if (!farm) throw new ApiError(403, "Not your farm.");
         filter.farm = farm._id;
     }
@@ -98,17 +101,21 @@ const createReport = asyncHandler(async (req, res) => {
         status: "new",
     });
 
-    return res
-        .status(201)
-        .json(new ApiResponse(201, report, "Report created"));
+    return res.status(201).json(new ApiResponse(201, report, "Report created"));
 });
 
-const consultVet = asyncHandler(async (req, res)=> {
-    const report = await Report.findOne({ _id: req.params.rid, farm: req.params.id })
+const consultVet = asyncHandler(async (req, res) => {
+    const report = await Report.findOne({
+        _id: req.params.rid,
+        farm: req.params.id,
+    });
     if (!report) throw new ApiError(404, "Report not found");
 
     if (!validTransaction(report.status, "vet_review")) {
-        throw new ApiError(400, `Cannot move from ${report.status} -> vet_review`);
+        throw new ApiError(
+            400,
+            `Cannot move from ${report.status} -> vet_review`
+        );
     }
 
     report.status = "vet_review";
@@ -117,15 +124,18 @@ const consultVet = asyncHandler(async (req, res)=> {
     return res
         .status(200)
         .json(new ApiResponse(200, report, "Sent for vet review"));
-})
+});
 
-const vetReview = asyncHandler(async (req, res)=> {
-    const {diagnosis, prescription } = req.body;
+const vetReview = asyncHandler(async (req, res) => {
+    const { diagnosis, prescription } = req.body;
     const report = await Report.findById(req.params.rid);
     if (!report) throw new ApiError(404, "Report not found");
 
     if (!validTransaction(report.status, "pharmacy_requested")) {
-        throw new ApiError(400, `Cannot move from ${report.status} -> pharmacy_requested`);
+        throw new ApiError(
+            400,
+            `Cannot move from ${report.status} -> pharmacy_requested`
+        );
     }
 
     report.vetReview = {
@@ -141,14 +151,17 @@ const vetReview = asyncHandler(async (req, res)=> {
     return res
         .status(200)
         .json(new ApiResponse(200, report, "Vet review added"));
-})
+});
 
-const pharmacyResponse = asyncHandler(async (req, res)=> {
+const pharmacyResponse = asyncHandler(async (req, res) => {
     const { medicines, orderStatus } = req.body;
     const report = await Report.findById(req.params.rid);
     if (!report) throw new ApiError(404, "Report not found");
 
-    if (!validTransaction(report.status, "closed") && orderStatus === "fulfilled") {
+    if (
+        !validTransaction(report.status, "closed") &&
+        orderStatus === "fulfilled"
+    ) {
         throw new ApiError(400, `Cannot close report from ${report.status}`);
     }
 
@@ -157,7 +170,7 @@ const pharmacyResponse = asyncHandler(async (req, res)=> {
         medicines,
         orderStatus,
         updatedAt: new Date(),
-    }
+    };
 
     if (orderStatus === "fulfilled") report.status = "closed";
 
@@ -179,10 +192,8 @@ const closeReport = asyncHandler(async (req, res) => {
     report.status = "closed";
     await report.save();
 
-    return res
-        .status(200)
-        .json(new ApiResponse(200, report, "Report closed"));
-})
+    return res.status(200).json(new ApiResponse(200, report, "Report closed"));
+});
 
 const deleteReport = asyncHandler(async (req, res) => {
     const filter = { _id: req.params.rid };
