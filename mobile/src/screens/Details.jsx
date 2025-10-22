@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Image,
 } from 'react-native';
 import { useTheme } from '../context/Theme.context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -68,7 +69,13 @@ const Details = ({ navigation, route }) => {
   return (
     <View style={[styles.container, { backgroundColor: colors.appBg }]}>
       <View style={styles.locationContainer}>
-        <View style={[styles.map, { backgroundColor: colors.cardBg }]} />
+        <View style={[styles.map, { backgroundColor: colors.cardBg }]}>
+          <Image
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            source={require('../assets/images/map.png')}
+          />
+          <View style={styles.pin} />
+        </View>
         <View style={styles.infoList}>
           <View style={styles.infoRow}>
             <Text style={{ fontSize: 16 }}>📍</Text>
@@ -78,7 +85,7 @@ const Details = ({ navigation, route }) => {
           </View>
           <View style={styles.infoRow}>
             <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-              Flocks :
+              {item.type === 'pig' ? '🐷' : '🐔'}
             </Text>
             <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
               {item.size}
@@ -199,5 +206,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'center',
     borderRadius: 12,
+  },
+  pin: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
+    borderTopWidth: 20,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: 'red',
+    position: 'absolute',
+    top: 60,
+    left: 130,
   },
 });

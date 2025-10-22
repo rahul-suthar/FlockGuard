@@ -12,51 +12,30 @@ const Card = ({ item, handleDelete, navigation }) => {
       onPress={() => navigation.navigate('Details', { item: item })}
     >
       <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ gap: 14 }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontFamily: 'Lato-Bold',
               color: colors.textPrimary,
             }}
           >
             {item.name}
           </Text>
-          <View
-            style={[
-              styles.info,
-              {
-                backgroundColor: colors.accent,
-              },
-            ]}
-          >
-            <Text style={styles.infoText}>
-              {item.type === 'pig' ? '🐷' : '🐔'}
+          <View style={[styles.info]}>
+            <Text style={[styles.infoText, { color: colors.textSecondary }]}>
+              {item.type === 'pig' ? '🐷' : '🐔'} {item.size}
             </Text>
           </View>
-        </View>
-        <View style={{ gap: 5, paddingLeft: 20 }}>
-          <Text style={{ color: colors.textSecondary }}>
-            Size : {item.size}
-          </Text>
-          <Text style={{ color: colors.textSecondary }}>
-            Location : {item.location}
+          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
+            📍 {item.location}
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.btn, { borderColor: colors.error, backgroundColor: colors.bgerror }]}
+          style={[styles.btn, { backgroundColor: colors.appBg }]}
           onPress={() => handleDelete(item)}
         >
           <FeatherIcon size={18} name="trash-2" color={colors.error} />
-          <Text
-            style={{
-              fontFamily: 'Lato-Bold',
-              color: colors.error,
-              textAlign: 'center',
-            }}
-          >
-            Delete
-          </Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -77,31 +56,31 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 10,
-    gap: 16,
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 12,
+    gap: 24,
   },
   btn: {
-    paddingVertical: 5,
+    paddingVertical: 6,
     borderRadius: 50,
-    width: '30%',
-    alignSelf: 'flex-end',
-    borderWidth: 0.4,
+    paddingHorizontal: 14,
+    borderWidth: 0.1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-    elevation: 0.8,
+    elevation: 0.3,
+    position: 'absolute',
+    top: 12,
+    right: 12,
   },
   info: {
     borderRadius: 16,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
     overflow: 'hidden',
+    flexDirection: 'row',
+    marginTop: 4,
   },
   infoText: {
-    fontFamily: 'OpenSans-Regular',
-    fontSize: fonts.text.caption,
-    fontSize: 24,
+    fontFamily: 'Lato-Bold',
+    fontSize: 16,
   },
 });
