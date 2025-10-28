@@ -2,7 +2,7 @@ const colors = {
   primary: 'hsl(0, 60%, 64%)',
   appBg: 'hsl(0, 0%, 95%)',
   cardBg: 'hsl(0, 0%, 100%)',
-  accent: 'hsl(210, 56%, 77%)',
+  accent: 'hsl(210, 56%, 65%)',
   pigType: 'hsl(17, 77%, 82%)',
   henType: 'hsl(28, 30%, 41%)',
   textPrimary: 'hsl(216, 20%, 4%)',

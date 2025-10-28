@@ -1,10 +1,59 @@
-# OSX
+# ----------------------------------------------------------------------
+# Core React Native .gitignore - Updated for Safety
+# ----------------------------------------------------------------------
+
+# macOS
 .DS_Store
 
-# Env files
+# ----------------------------------------------------------------------
+# Environment/Secrets (CRITICAL: Do not commit these)
+# ----------------------------------------------------------------------
 .env
+.env.*
+.env.local
+**/.env.local
 
-# Xcode
+# Sensitive keys & credentials
+*.p12
+*.pem
+*.key
+*.cer
+*.crt
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist
+*.mobileprovision
+*.provisionprofile
+secrets.*
+credentials.*
+
+# ----------------------------------------------------------------------
+# Node / JS Tooling & Cache
+# ----------------------------------------------------------------------
+node_modules/
+# package-lock.json is generally committed for reproducible builds, 
+# but uncomment the next line if you are using yarn/pnpm exclusively
+# package-lock.json 
+npm-debug.log
+yarn-error.log
+.pnpm-store/
+.eslintcache
+.watchmanconfig
+.cache/
+
+# ----------------------------------------------------------------------
+# Xcode / iOS (KEEP the main ios/ folder, IGNORE only the generated files)
+# ----------------------------------------------------------------------
+# Removed the dangerous 'ios/' line.
+
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+**/.xcode.env.local
+
+# Project build & settings files
 build/
 *.pbxuser
 !default.pbxuser
@@ -14,62 +63,67 @@ build/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-**/.xcode.env.local
+*.xcodeproj/project.xcworkspace/xcuserdata
 
-# Android/IntelliJ
+# Ruby / Bundler / CocoaPods
+.bundle/
+vendor/bundle/
+# Gemfile.lock is often committed, but excluded here for safety
+Gemfile.lock 
+**/Pods/
+Podfile.lock
+
+# ----------------------------------------------------------------------
+# Android / IntelliJ (KEEP the main android/ folder, IGNORE only the generated files)
+# ----------------------------------------------------------------------
+# Removed the dangerous 'android/' line.
+
+# Build/Cache
 build/
-.idea/
 .gradle/
+.idea/
+.cxx/
 local.properties
+*.apk
 *.iml
 *.hprof
-.cxx/
+
+# Keystores (already covered in Sensitive keys, but good to double-list)
 *.keystore
-!debug.keystore
-.kotlin/
-*.apk # <-- Ignore APK files everywhere
+*.jks
+debug.keystore
 
-# node.js
-node_modules/
-npm-debug.log
-yarn-error.log
+# ----------------------------------------------------------------------
+# Expo / Metro / Bundles
+# ----------------------------------------------------------------------
+.expo/
+.expo-shared/
+.metro-health-check*
+*.jsbundle
+.bundle/
 
-# fastlane
+# ----------------------------------------------------------------------
+# Testing & CI
+# ----------------------------------------------------------------------
+__tests__/
+__test__/
+coverage/
+.nyc_output/
+
+# Fastlane
 **/fastlane/report.xml
 **/fastlane/Preview.html
 **/fastlane/screenshots
 **/fastlane/test_output
+fastlane/credentials.json
 
-# Bundle artifact
-*.jsbundle
-
-# Ruby / CocoaPods
-**/Pods/
-vendor/bundle/
-
-# Metro health check
-.metro-health-check*
-
-# Testing
-coverage/
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# VSCode settings
+# IDEs / Editors
 .vscode/
+# *.iml is covered under Android/IntelliJ, but repeated here for safety
+*.iml
 
 # Misc
 *.log

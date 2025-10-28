@@ -9,7 +9,7 @@ import {
 import { useTheme } from '../context/Theme.context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useCamera } from '../context/Camera.context';
-import { fetchReports, uploadReport } from '../apis/report.js';
+import { fetchReports, createReport } from '../apis/report.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePopup } from '../context/Popup.context.js';
 import { useEffect, useState } from 'react';
@@ -26,13 +26,15 @@ const Details = ({ navigation, route }) => {
 
   useEffect(() => {
     const getReports = async () => {
-      const cachedReportsString = await AsyncStorage.getItem('reports');
+      const cachedReportsString = await AsyncStorage.getItem(
+        `reports_${item._id}`,
+      );
       let cachedReports = [];
       if (cachedReportsString) {
         cachedReports = JSON.parse(cachedReportsString);
       } else {
         const data = await fetchReports(item._id);
-        await AsyncStorage.setItem('reports', JSON.stringify(data));
+        await AsyncStorage.setItem(`reports_${item._id}`, JSON.stringify(data));
         setreports(data || []);
       }
     };
@@ -45,24 +47,27 @@ const Details = ({ navigation, route }) => {
   const handleOpenCamera = () => {
     openCamera(async capturedPhoto => {
       console.log('Photo captured: ', capturedPhoto);
-      showPopup({ success: false, msg: 'Feature under development' });
-
-      // try {
-      //   const report = await uploadReport(item._id, capturedPhoto);
-      //   console.log('Report received: ', report);
-      //   const existing =
-      //     JSON.parse(await AsyncStorage.getItem('reports')) || [];
-      //   const updated = [...existing, report];
-      //   await AsyncStorage.setItem(
-      //     `reports_${item._id}`,
-      //     JSON.stringify(updated),
-      //   );
-      //   setreports(updated);
-      //   showPopup({ success: true, msg: 'Report created' });
-      // } catch (err) {
-      //   console.log(err);
-      //   showPopup({ success: false, msg: 'failed to create report' });
-      // }
+      const key = `reports_${item._id}`;
+      try {
+        console.log('generating report');
+        const photoPath = capturedPhoto.path.startsWith('file://')
+          ? capturedPhoto.path
+          : `file://${capturedPhoto.path}`;
+        console.log(photoPath);
+        const report = await createReport(item._id, photoPath);
+        console.log('Report received: ', report);
+        const raw = await AsyncStorage.getItem(key);
+        const existing = raw ? JSON.parse(raw) : [];
+        const next = existing.some(r => r._id === report._id)
+          ? existing.map(r => (r._id === report._id ? report : r))
+          : [...existing, report];
+        await AsyncStorage.setItem(key, JSON.stringify(next));
+        setreports(next);
+        showPopup({ success: true, msg: 'Report created' });
+      } catch (err) {
+        console.log(err);
+        showPopup({ success: false, msg: 'failed to create report' });
+      }
     });
   };
 
@@ -71,7 +76,7 @@ const Details = ({ navigation, route }) => {
       <View style={styles.locationContainer}>
         <View style={[styles.map, { backgroundColor: colors.cardBg }]}>
           <Image
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={styles.img}
             source={require('../assets/images/map.png')}
           />
           <View style={styles.pin} />
@@ -161,6 +166,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 0.3,
     elevation: 1,
+    overflow: 'hidden',
+    padding: 2,
+  },
+  img: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: 12,
   },
   addBtn: {
     width: 60,

@@ -19,6 +19,7 @@
     "axios": "^1.12.2",
     "react": "19.1.0",
     "react-native": "^0.81.4",
+    "react-native-confetti-cannon": "^1.5.2",
     "react-native-dotenv": "^3.4.11",
     "react-native-permissions": "^5.4.2",
     "react-native-safe-area-context": "^5.6.1",

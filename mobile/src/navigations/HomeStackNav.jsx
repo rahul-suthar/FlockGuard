@@ -23,7 +23,6 @@ const HomeStackNav = () => {
           shadowOpacity: 0,
           borderBottomWidth: 0,
           shadowColor: 'transparent',
-          elevation: 0,
         },
         headerTitleStyle: {
           fontFamily: 'Lato-Bold',

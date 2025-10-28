@@ -18,16 +18,16 @@ const fetchReports = async farmId => {
   }
 };
 
-const uploadReport = async (farmId, photo) => {
+const createReport = async (farmId, photoPath) => {
   const formData = new FormData();
   formData.append('symptomsImg', {
-    uri: photo.path,
+    uri: photoPath,
     type: 'image/jpeg',
-    name: 'symptoms.jpg',
+    fileName: 'symptoms.jpg',
   });
 
   console.log(formData);
-  console.log(photo);
+  console.log(photoPath);
   console.log(farmId);
 
   try {
@@ -39,8 +39,10 @@ const uploadReport = async (farmId, photo) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        transformRequest: x => x,
       },
     );
+    console.log(res);
 
     return res.data.data;
   } catch (err) {
@@ -50,4 +52,4 @@ const uploadReport = async (farmId, photo) => {
   }
 };
 
-export { fetchReports, uploadReport };
+export { fetchReports, createReport };

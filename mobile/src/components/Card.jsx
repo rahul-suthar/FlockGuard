@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { fonts } from '../constants/fontSize';
 import { useTheme } from '../context/Theme.context';
 import FeatherIcon from 'react-native-vector-icons/Feather.js';
 

@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Profile from '../screens/Profile.jsx';
 import TabBar from '../components/TabBar.jsx';
+import Game from '../screens/Game.jsx';
+import Vet from '../screens/Vet.jsx';
 import { fonts } from '../constants/fontSize.js';
 import { useTheme } from '../context/Theme.context.js';
 import HomeStackNav from './HomeStackNav.jsx';
@@ -11,7 +13,7 @@ const TabNavigator = () => {
   const colors = useTheme();
   return (
     <Tab.Navigator
-    initialRouteName='HomeStack'
+      initialRouteName="HomeStack"
       tabBar={props => <TabBar {...props} />}
       screenOptions={{
         headerStyle: {
@@ -30,9 +32,32 @@ const TabNavigator = () => {
       <Tab.Screen
         name="HomeStack"
         component={HomeStackNav}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          iconName: 'home',
+        }}
       />
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen
+        name="Vets"
+        component={Vet}
+        options={{
+          iconName: 'medkit',
+        }}
+      />
+      <Tab.Screen
+        name="Game"
+        component={Game}
+        options={{
+          iconName: 'game-controller',
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          iconName: 'person',
+        }}
+      />
     </Tab.Navigator>
   );
 };

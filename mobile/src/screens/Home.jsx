@@ -113,7 +113,7 @@ const Home = ({ navigation }) => {
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.appBg }]}
       >
-        <View style={{ marginVertical: 4 }}>
+        <View style={{ marginVertical: 12 }}>
           <View style={styles.searchbarBox}>
             <TextInput
               value={searchQuery}
@@ -164,7 +164,7 @@ const Home = ({ navigation }) => {
         <View
           style={{
             width: '90%',
-            height: '96%',
+            height: '85%',
             backgroundColor: 'transparent',
             justifyContent: 'center',
           }}
@@ -183,7 +183,11 @@ const Home = ({ navigation }) => {
             <FlatList
               data={filteredFarm}
               renderItem={({ item }) => (
-                <Card item={item} handleDelete={handleDelete} navigation={navigation} />
+                <Card
+                  item={item}
+                  handleDelete={handleDelete}
+                  navigation={navigation}
+                />
               )}
               contentContainerStyle={{
                 gap: 22,
@@ -228,7 +232,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
     paddingBottom: 80,
-    paddingTop: -40,
+    // paddingTop: -40,
     gap: 8,
   },
   inputs: {
@@ -239,6 +243,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     fontFamily: 'Lato-Bold',
     fontSize: fonts.text.primary,
+    borderWidth: 0.2,
   },
   searchbarBox: {
     flexDirection: 'row',
