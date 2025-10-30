@@ -4,7 +4,6 @@ import {
   Keyboard,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   useColorScheme,
@@ -22,8 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
 import { useTheme } from '../context/Theme.context.js';
-
-const filters = ['All', 'Pig', 'Poultry'];
+import SearchBar from '../components/SearchBar.jsx';
 
 const Home = ({ navigation }) => {
   const [farms, setFarms] = useState([]);
@@ -113,53 +111,14 @@ const Home = ({ navigation }) => {
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.appBg }]}
       >
-        <View style={{ marginVertical: 12 }}>
-          <View style={styles.searchbarBox}>
-            <TextInput
-              value={searchQuery}
-              onChangeText={text => setsearchQuery(text)}
-              placeholderTextColor={colors.textSecondary}
-              placeholder="search your farm"
-              style={[
-                styles.inputs,
-                { backgroundColor: colors.input, color: colors.textPrimary },
-              ]}
-              autoCapitalize="none"
-            />
-            {searchQuery !== '' && (
-              <TouchableOpacity
-                style={styles.resetQuery}
-                onPress={() => setsearchQuery('')}
-              >
-                <Ionicons name="close" size={24} />
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.filterToggles}>
-            {filters.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.filters,
-                  {
-                    backgroundColor:
-                      currFilter === item ? colors.accent : colors.disabled,
-                    elevation: currFilter === item ? 3 : 1,
-                    borderWidth: currFilter === item ? 0.7 : 0.2,
-                  },
-                ]}
-                onPress={() => setCurrFilter(item)}
-              >
-                <Text
-                  style={{
-                    color: currFilter === item ? '' : colors.textSecondary,
-                  }}
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        <View>
+          <SearchBar
+            searchQuery={searchQuery}
+            setsearchQuery={setsearchQuery}
+            currFilter={currFilter}
+            setCurrFilter={setCurrFilter}
+            colors={colors}
+          />
         </View>
         <View
           style={{
@@ -232,7 +191,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
     paddingBottom: 80,
-    // paddingTop: -40,
+    paddingTop: 8,
     gap: 8,
   },
   inputs: {

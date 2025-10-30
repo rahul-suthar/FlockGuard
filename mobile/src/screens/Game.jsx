@@ -304,10 +304,13 @@ const Game = () => {
           reducedTransparencyFallbackColor="white"
         />
         <View style={[styles.nameModal, { backgroundColor: colors.cardBg }]}>
+          <TouchableOpacity onPress={()=>setShowModel(false)} style={{position: 'absolute', right: 10, top: 10}}>
+            <Feather name={'x-circle'} color={colors.textPrimary} size={28} />
+          </TouchableOpacity>
           <Text
             style={{
               color: colors.textPrimary,
-              fontSize: 28,
+              fontSize: 26,
               textAlign: 'center',
               fontFamily: 'Lato-Bold',
             }}
@@ -331,7 +334,6 @@ const Game = () => {
               backgroundColor: colors.success,
               borderRadius: 4,
               paddingVertical: 6,
-              marginHorizontal: 6,
             }}
             onPress={handleClose}
           >
@@ -497,7 +499,7 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 12,
     borderRadius: 12,
     fontFamily: 'Lato-Bold',
     fontSize: 24,

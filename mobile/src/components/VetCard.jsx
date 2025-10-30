@@ -13,7 +13,7 @@ const VetCard = ({ item }) => {
             overflow: 'hidden',
             borderRadius: 8,
             aspectRatio: 1,
-            height: 130,
+            height: 120,
           }}
         >
           <Image

@@ -17,7 +17,6 @@ const GameCard = ({ colors, onToggle, isFlipped, isDisable, number }) => {
   });
 
   useEffect(() => {
-    if (!isFlipped) return;
     const targetVal = isFlipped ? 1 : 0;
     Animated.parallel([
       Animated.timing(color, {
