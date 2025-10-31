@@ -18,11 +18,11 @@ const VetCard = ({ item }) => {
         >
           <Image
             style={{
-              height: '100%',
+              height: '140%',
               width: '100%',
               objectFit: 'cover',
             }}
-            source={require('../assets/images/pigVet.jpg')}
+            source={item.img}
           />
         </View>
         <View
@@ -39,23 +39,24 @@ const VetCard = ({ item }) => {
               color: colors.textPrimary,
             }}
           >
+            {item.check.toLowerCase().includes('not') ? '🔸' : '⚡'}{' '}
             {item.check}
           </Text>
           <View
             style={{
               gap: 14,
-              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            <Text style={[styles.infoText, { color: colors.textPrimary }]}>
+            <Text style={[styles.infoText, { color: colors.textSecondary }]}>
               Dr. {item.name}
             </Text>
             <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-              {item.type} Specialist
+              🩺 {item.type} Specialist
             </Text>
-            <Text style={[styles.infoText, { color: colors.textSecondary }]}>
+            {/* <Text style={[styles.infoText, { color: colors.textSecondary }]}>
               📍 {item.location}
-            </Text>
+            </Text> */}
           </View>
         </View>
       </View>

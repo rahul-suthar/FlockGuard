@@ -20,6 +20,7 @@ const vetList = [
     name: 'Vinod Kumar',
     type: 'pig',
     location: 'Vadodara, gujarat, 345028',
+    img: require('../assets/images/Vet.png'),
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const vetList = [
     name: 'Sunjay Dutt',
     type: 'poultry',
     location: 'Mumbai, Maharastra, 349328',
+    img: require('../assets/images/Vet.png'),
   },
   {
     id: 3,
@@ -34,6 +36,7 @@ const vetList = [
     name: 'Akshay Kumar',
     type: 'pig',
     location: 'bhopal, madhyapradesh, 390628',
+    img: require('../assets/images/Vet.png'),
   },
   {
     id: 4,
@@ -41,6 +44,7 @@ const vetList = [
     name: 'Akshay Kumar',
     type: 'pig',
     location: 'bhopal, madhyapradesh, 390628',
+    img: require('../assets/images/Vet.png'),
   },
 ];
 
@@ -57,7 +61,7 @@ const Vet = () => {
       const name =
         searchQuery !== ''
           ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.location.toLowerCase().includes(searchQuery.toLowerCase())
+            item.location.toLowerCase().includes(searchQuery.toLowerCase())
           : true;
 
       return type && name;

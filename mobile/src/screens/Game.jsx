@@ -105,31 +105,31 @@ const Game = () => {
     }
   }, [score, botScore]);
 
-  // useEffect(() => {
-  //   nameGenerator();
-  //   resetGame();
+  useEffect(() => {
+    nameGenerator();
+    resetGame();
 
-  //   return () => {
-  //     if (botTimerRef.current) {
-  //       clearTimeout(botTimerRef.current);
-  //       botTimerRef.current = null;
-  //     }
-  //   };
-  // }, []);
+    return () => {
+      if (botTimerRef.current) {
+        clearTimeout(botTimerRef.current);
+        botTimerRef.current = null;
+      }
+    };
+  }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      nameGenerator();
-      resetGame();
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     nameGenerator();
+  //     resetGame();
 
-      return () => {
-        if (botTimerRef.current) {
-          clearTimeout(botTimerRef.current);
-          botTimerRef.current = null;
-        }
-      };
-    }, []),
-  );
+  //     return () => {
+  //       if (botTimerRef.current) {
+  //         clearTimeout(botTimerRef.current);
+  //         botTimerRef.current = null;
+  //       }
+  //     };
+  //   }, []),
+  // );
 
   const checkBingo = b => {
     const n = b.length;
