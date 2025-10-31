@@ -1,4 +1,5 @@
 import {
+  Animated,
   Keyboard,
   StyleSheet,
   Text,
@@ -13,8 +14,9 @@ import { useCustomState } from '../hooks/state.js';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
 import { useTheme } from '../context/Theme.context.js';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
+import { ScreenStackHeaderRightView } from 'react-native-screens';
 
 const Register = ({ navigation }) => {
   const colors = useTheme();
@@ -32,6 +34,24 @@ const Register = ({ navigation }) => {
   });
   const [shiftLayout, setShiftLayout] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  const shiftAnim = useRef(new Animated.Value(shiftLayout ? 1 : 0)).current;
+  const layoutPad = shiftAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [220, 80],
+  });
+
+  const runAnim = () => {
+    Animated.timing(shiftAnim, {
+      toValue: shiftLayout ? 1 : 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useEffect(() => {
+    runAnim();
+  }, [shiftLayout]);
 
   const handleDataChange = (field, text) => {
     if (field === 'mobileNo') {
@@ -81,12 +101,12 @@ const Register = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={changeLayout} accessible={false}>
-      <View
+      <Animated.View
         style={[
           styles.container,
           {
             backgroundColor: colors.appBg,
-            justifyContent: shiftLayout ? 'flex-start' : 'center',
+            paddingTop: layoutPad,
           },
         ]}
       >
@@ -105,7 +125,7 @@ const Register = ({ navigation }) => {
               onChangeText={text => handleDataChange('name', text)}
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
-              onPress={() => setShiftLayout(true)}
+              onFocus={() => setShiftLayout(true)}
             />
             <TextInput
               style={[
@@ -118,7 +138,7 @@ const Register = ({ navigation }) => {
               onChangeText={text => handleDataChange('email', text)}
               autoCapitalize="none"
               keyboardType="email-address"
-              onPress={() => setShiftLayout(true)}
+              onFocus={() => setShiftLayout(true)}
             />
             <View>
               <TextInput
@@ -136,7 +156,7 @@ const Register = ({ navigation }) => {
                 placeholderTextColor={colors.textSecondary}
                 autoCapitalize="none"
                 secureTextEntry={!showPass}
-                onPress={() => setShiftLayout(true)}
+                onFocus={() => setShiftLayout(true)}
               />
               <TouchableOpacity
                 style={styles.eyeIcon}
@@ -162,7 +182,7 @@ const Register = ({ navigation }) => {
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
               keyboardType="numeric"
-              onPress={() => setShiftLayout(true)}
+              onFocus={() => setShiftLayout(true)}
             />
           </View>
           <View style={styles.btns}>
@@ -190,7 +210,7 @@ const Register = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </Animated.View>
     </TouchableWithoutFeedback>
   );
 };
@@ -216,16 +236,16 @@ const styles = StyleSheet.create({
   },
   inputs: {
     width: 300,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.primary,
   },
   eyeIcon: {
     position: 'absolute',
-    right: 10,
-    top: 6,
+    right: 4,
+    top: 4,
     padding: 8,
     borderRadius: 14,
   },
@@ -236,8 +256,8 @@ const styles = StyleSheet.create({
   mainBtn: {
     width: 280,
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 50,
+    padding: 8,
+    borderRadius: 10,
   },
   mainText: {
     fontSize: fonts.btn.primary,

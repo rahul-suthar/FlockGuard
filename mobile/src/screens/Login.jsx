@@ -1,4 +1,5 @@
 import {
+  Animated,
   Image,
   Keyboard,
   StyleSheet,
@@ -15,7 +16,7 @@ import { useAuth } from '../context/Auth.context.js';
 import { usePopup } from '../context/Popup.context.js';
 import { useLoader } from '../context/Loader.context.js';
 import { useTheme } from '../context/Theme.context.js';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 
 const Login = ({ navigation }) => {
@@ -29,6 +30,20 @@ const Login = ({ navigation }) => {
   });
   const [showImg, setShowImg] = useState(true);
   const [showPass, setShowPass] = useState(false);
+
+  const imgHeiAnim = useRef(new Animated.Value(showImg ? 250 : 0)).current;
+
+  const runImgAnim = () => {
+    Animated.timing(imgHeiAnim, {
+      toValue: showImg ? 250 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useEffect(() => {
+    runImgAnim();
+  }, [showImg]);
 
   const handleDataChange = (field, text) => {
     setLogForm(prev => ({ ...prev, [field]: text }));
@@ -56,10 +71,17 @@ const Login = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={changeLayout} accessible={false}>
       <View style={[styles.container, { backgroundColor: colors.appBg }]}>
-        <Image
-          style={[styles.img, { display: showImg ? '' : 'none' }]}
-          source={require('../assets/images/logo.png')}
-        />
+        <Animated.View
+          style={{ height: imgHeiAnim, overflow: 'hidden', marginTop: '14%' }}
+        >
+          <Image
+            style={{
+              width: 250,
+              height: 250,
+            }}
+            source={require('../assets/images/logo.png')}
+          />
+        </Animated.View>
         <View style={styles.form}>
           <Text style={[styles.headText, { color: colors.textPrimary }]}>
             Login
@@ -75,16 +97,16 @@ const Login = ({ navigation }) => {
               onChangeText={text => handleDataChange('email', text)}
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
-              onPress={() => setShowImg(false)}
+              onFocus={() => setShowImg(false)}
             />
-            <View>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <TextInput
                 style={[
                   styles.inputs,
                   {
                     backgroundColor: colors.input,
                     color: colors.textPrimary,
-                    paddingRight: 52,
+                    paddingRight: 50,
                   },
                 ]}
                 placeholder="password"
@@ -93,7 +115,7 @@ const Login = ({ navigation }) => {
                 placeholderTextColor={colors.textSecondary}
                 secureTextEntry={!showPass}
                 autoCapitalize="none"
-                onPress={() => setShowImg(false)}
+                onFocus={() => setShowImg(false)}
               />
               <TouchableOpacity
                 style={styles.eyeIcon}
@@ -144,12 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     position: 'relative',
-    gap: 30,
-    paddingVertical: '24%',
-  },
-  img: {
-    width: 250,
-    height: 250,
+    gap: 40,
   },
   form: {
     height: '50%',
@@ -163,16 +180,16 @@ const styles = StyleSheet.create({
   },
   inputs: {
     width: 300,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
     fontFamily: 'OpenSans-Regular',
     fontSize: fonts.text.primary,
   },
   eyeIcon: {
     position: 'absolute',
-    right: 10,
-    top: 6,
+    right: 4,
+    top: 4,
     padding: 8,
     borderRadius: 14,
   },
@@ -183,8 +200,8 @@ const styles = StyleSheet.create({
   mainBtn: {
     width: 280,
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 50,
+    padding: 8,
+    borderRadius: 10,
   },
   mainText: {
     fontSize: fonts.btn.primary,
