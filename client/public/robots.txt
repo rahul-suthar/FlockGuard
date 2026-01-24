@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://flock-guard.vercel.app/sitemap.xml

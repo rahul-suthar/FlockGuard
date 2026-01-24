@@ -8,6 +8,7 @@ import Terms from "./pages/Terms.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import { AnimatePresence } from "framer-motion";
 import AnimatedPage from "./components/AnimatedPage.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 function App() {
   const location = useLocation();
@@ -54,6 +55,14 @@ function App() {
               element={
                 <AnimatedPage>
                   <Terms />
+                </AnimatedPage>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <AnimatedPage>
+                  <NotFound />
                 </AnimatedPage>
               }
             />
