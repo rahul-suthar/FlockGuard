@@ -1,28 +1,37 @@
+import DocLayout from "../components/DocLayout";
+
 function Contact() {
   return (
-    <div className="flex flex-col flex-1 my-8 max-w-2xl mx-auto px-2 gap-8">
-      <h1 className="text-2xl font-bold mb-3">Contact FlockGuard</h1>
-      <section>
-        <p>
-          Have feedback, need support, or want to learn more about how FlockGuard is making livestock farming smarter and safer? Reach out to our team anytime!
+    <DocLayout title="Contact" subtitle="Support & Contribution">
+      <section className="space-y-6">
+        <p className="max-w-xl">
+          Have feedback, need support, or want to contribute to the future of
+          AI-driven livestock management? Reach out to our team.
         </p>
-      </section>
-      <section className="space-y-2">
-        <div>
-          <span className="font-semibold">GitHub Issues & Contributions:</span>
-          <br />
-          <a
-            className="text-blue-500 underline"
-            href="https://github.com/rahul-suthar/flockguard"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            github.com/rahul-suthar/flockguard
-          </a>
+        <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden group">
+          <div className="absolute -top-1 right-0 opacity-10">
+            <span className="text-6xl font-black text-white">GIT</span>
+          </div>
+
+          <div className="relative z-10 space-y-4">
+            <h3 className="text-red-400 font-black uppercase tracking-widest text-[10px]">
+              {`//`} Source Control
+            </h3>
+            <p className="text-white font-bold text-lg">
+              GitHub Issues & Development
+            </p>
+            <a
+              href="https://github.com/rahul-suthar/flockguard"
+              target="_blank"
+              className="inline-block bg-white/10 text-red-300 px-4 py-2 rounded-lg border border-white/10 hover:bg-white/20 transition-all break-all"
+            >
+              github.com/rahul-suthar/flockguard
+            </a>
+          </div>
         </div>
       </section>
-    </div>
-  )
+    </DocLayout>
+  );
 }
 
-export default Contact
+export default Contact;

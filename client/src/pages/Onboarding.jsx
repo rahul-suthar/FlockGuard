@@ -1,41 +1,48 @@
-import { useEffect, useState } from "react";
-
-const previews = [
-  { id: 1, src: "login.jpg", alt: "Login_preview" },
-  { id: 2, src: "home.jpg", alt: "Home_preview" },
-  { id: 3, src: "profile.jpg", alt: "Profile_preview" },
-  { id: 4, src: "editprofile.jpg", alt: "Update_preview" },
-];
+import { useEffect, useState, useRef } from "react";
 
 function formatedAPKNames(name) {
   const parts = name.split("-");
   const version = parts[parts.length - 1];
-  return `FlockGuard-${version}`;
+  return version;
+}
+
+function getApkBadge(name) {
+  if (name.includes("v8a")) return "new phones (2014+)";
+  else if (name.includes("v7a")) return "old phones";
+  else if (name.includes("64")) return "emulators (64-bit)";
+  else return "emulators (32-bit)";
 }
 
 function Onboarding() {
-  const [isApkDrawerOpen, setIsApkDrawerOpen] = useState(false);
-  const [apkUrls, setapkUrls] = useState([
-    "https://github.com/rahul-suthar/FlockGuard/releases/latest",
-  ]);
+  const [apkUrls, setapkUrls] = useState([]);
+  const [selectedApk, setSelectedApk] = useState(null);
+
+  useEffect(() => {
+    if (apkUrls.length > 0 && !selectedApk) {
+      const defaultApk =
+        apkUrls.find((a) => a.name.includes("v8a")) || apkUrls[0];
+      setSelectedApk(defaultApk);
+    }
+  }, [apkUrls]);
+
   useEffect(() => {
     const cachedAPKs = localStorage.getItem("latestReleaseAPKs");
     const cacheTime = localStorage.getItem("latestReleaseAPKsTime");
     const now = Date.now();
 
-    if (cachedAPKs && cacheTime && now - cacheTime < 3600 * 1000) {
+    if (cachedAPKs && cacheTime) {
       setapkUrls(JSON.parse(cachedAPKs));
       console.log("loaded from local storage.");
       return;
     }
 
     fetch(
-      "https://api.github.com/repos/rahul-suthar/FlockGuard/releases/latest"
+      "https://api.github.com/repos/rahul-suthar/FlockGuard/releases/latest",
     )
       .then((res) => res.json())
       .then((data) => {
         const apkAssets = data.assets.filter((asset) =>
-          asset.name.endsWith(".apk")
+          asset.name.endsWith(".apk"),
         );
         if (apkAssets.length > 0) {
           const apks = apkAssets.map((asset) => ({
@@ -55,77 +62,86 @@ function Onboarding() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 mb-8">
-      <section className="flex flex-col gap-8 lg:flex-row items-center justify-between py-8 px-4 text-center">
-        <div className="text-center lg:text-left">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-red-400">
+    <div className="flex flex-col flex-1 mx-auto w-full max-w-7xl px-6 py-8 sm:py-12">
+      <section className="flex flex-col-reverse lg:flex-row items-center justify-around gap-10 lg:gap-24">
+        <div className="w-full lg:w-1/4 flex justify-center lg:justify-start">
+          <div className="relative group max-w-56 sm:max-w-64">
+            <img
+              className="relative w-full h-auto object-contain rounded-3xl shadow-2xl transform rotate-2 group-hover:rotate-0 transition-transform duration-500 ease-out"
+              src="images/screens.gif"
+              alt="App Interface Preview"
+            />
+          </div>
+        </div>
+
+        <div className="w-full lg:w-fit flex flex-col items-center lg:items-start text-center lg:text-left">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-4 text-red-500 tracking-wide sm:tracking-tighter leading-none">
             FlockGuard
           </h1>
-          <p className="text-lg mb-4 min-w-xl">
-            Protect and manage pig & poultry farms with innovative AI-powered
-            technology.
+          <p className="text-xs sm:text-base lg:text-lg text-zinc-500 mb-8 sm:mb-12 max-w-[280px] sm:max-w-lg font-medium leading-relaxed sm:leading-tight tracking-tight">
+            <span className="font-bold text-black">PROTECT, MANAGE</span> and{" "}
+            <span className="font-bold text-black">SECURE</span> your pig &
+            poultry farms with innovative technology.
           </p>
-          <p className="min-w-xl text-md">
-            Suitable for both Dark🌑 & Light☀️ modes. Making it appropriate to
-            your vision.
-          </p>
-        </div>
-        <div className="flex gap-6 relative">
-          <button
-            onClick={() => setIsApkDrawerOpen((open) => !open)}
-            className="bg-red-500/90 text-white px-4 py-2 rounded hover:bg-red-600 hover:scale-105 cursor-pointer transition"
-          >
-            Download App
-          </button>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/rahul-suthar/flockguard"
-          >
-            <button className="bg-red-50 text-amber-700 px-4 py-2 rounded hover:bg-red-200 cursor-pointer outline-2 -outline-offset-2 transition">
-              GitHub 🚀
-            </button>
-          </a>
 
-          {isApkDrawerOpen && (
-            <ul className="absolute top-full left-0 mt-2 p-2 bg-white rounded shadow-lg z-10 flex flex-col gap-2 min-w-[220px]">
-              {apkUrls.length > 0 ? (
-                apkUrls.map(({ name, url }, index) => (
-                  <li key={index}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-left px-4 py-2 bg-red-50 rounded hover:bg-red-100"
+          <div className="w-full max-w-xl bg-gray-50/50 border border-gray-100 p-5 sm:p-6 rounded-3xl shadow-sm">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5">
+              Select System Build
+            </h3>
+
+            <div className="grid sm:grid-cols-2 gap-3 mb-6">
+              {apkUrls.map((apk, index) => {
+                const isSelected = selectedApk?.name === apk.name;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedApk(apk)}
+                    className={`group flex items-center justify-between gap-3 px-4 py-3 sm:p-4  border-2 rounded-2xl transition-all duration-300 text-left cursor-pointer
+                        ${isSelected ? "border-red-500 bg-red-50/50 shadow-md" : "border-gray-100 bg-white hover:border-gray-300"}
+                      `}
+                  >
+                    <div className="flex flex-col min-w-0">
+                      <span
+                        className={`font-black text-xs md:text-sm tracking-tight truncate transition-colors ${isSelected ? "text-red-600" : "text-gray-900"}`}
+                      >
+                        {getApkBadge(apk.name)}
+                      </span>
+                      <span className="text-[10px] md:text-xs text-gray-500 font-bold tracking-wider mt-0.5">
+                        {formatedAPKNames(apk.name)}
+                      </span>
+                    </div>
+
+                    <div
+                      className={`shrink-0 w-4 h-4 rounded-full border-2 grid place-items-center transition-all ${isSelected ? "border-red-500" : "border-gray-200"}`}
                     >
-                      {formatedAPKNames(name)}
-                    </a>
-                  </li>
-                ))
-              ) : (
-                <li className="px-4 py-2 text-gray-500">No APK available</li>
-              )}
-            </ul>
-          )}
+                      {isSelected && (
+                        <div className="w-2 h-2 bg-red-500 rounded-full" />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 text-xs md:text-sm">
+              <a
+                href={selectedApk?.url}
+                className="flex-1 text-center bg-red-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-red-200 hover:bg-red-600 hover:-translate-y-0.5 transition-all active:scale-95 tracking-widest"
+              >
+                Install App
+              </a>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://github.com/rahul-suthar/flockguard"
+                className="flex items-center justify-center px-6 py-4 bg-white border-2 border-gray-100 text-gray-700 font-black rounded-2xl hover:border-red-500 hover:text-red-500 transition-all tracking-widest"
+              >
+                GitHub 🚀
+              </a>
+            </div>
+          </div>
         </div>
       </section>
-
-      <div className="max-w-120 sm:max-w-180 lg:max-w-240 grid grid-cols-2 p-4 sm:grid-cols-4 gap-6 gap-y-8 sm:gap-8 m-auto">
-        {previews &&
-          previews.map((tab) => (
-            <div
-              key={tab.id}
-              className="aspect-9/20 p-1 flex flex-col items-center bg-red-200/80 rounded-md sm:hover:-translate-y-4 hover:scale-105 transition cursor-pointer overflow-hidden"
-            >
-              <img
-                className="w-full h-full object-contain rounded-sm"
-                src={`images/${tab.src}`}
-                alt={tab.alt}
-              />
-              <span>{tab.alt}</span>
-            </div>
-          ))}
-      </div>
     </div>
   );
 }
