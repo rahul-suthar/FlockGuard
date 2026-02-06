@@ -28,14 +28,16 @@ const ProfileForm = ({ setOpenForm }) => {
   const { setShowLoad } = useLoader();
   const { showPopup } = usePopup();
 
+  const Label = ({ text }) => (
+    <Text style={[styles.label, { color: colors.textSecondary }]}>{text}</Text>
+  );
+
   const handleDataChange = (field, text) => {
     if (field === 'mobileNo') {
+      const cleanNum = text.replace(/[^0-9]/g, '');
       setForm(prev => ({
         ...prev,
-        phone: {
-          ...prev.phone,
-          mobileNo: Number(text),
-        },
+        phone: { ...prev.phone, mobileNo: cleanNum },
       }));
     } else {
       setForm(prev => ({ ...prev, [field]: text }));
@@ -43,89 +45,72 @@ const ProfileForm = ({ setOpenForm }) => {
   };
 
   const handleSubmit = async () => {
-    if (
-      form.name == user.name &&
-      form.phone.mobileNo == user.phone.mobileNo &&
-      form.language == user.language
-    ) {
+    if (form.name === user.name && form.phone.mobileNo == user.phone.mobileNo && form.language === user.language) {
       setOpenForm(false);
       return;
     }
     if (!form.name.trim() || !form.language.trim()) {
-      showPopup({
-        success: false,
-        msg: 'Insufficient Data',
-      });
+      showPopup({ success: false, msg: 'Please fill all fields' });
       return;
     }
-    if (form.phone.mobileNo <= 999999999) {
-      showPopup({ success: false, msg: 'Invalid Mobile Number.' });
-      return;
-    }
-    setShowLoad({ show: true, msg: 'Updating user info' });
+    
+    setShowLoad({ show: true, msg: 'Saving changes...' });
     try {
       await updateUser(form, showPopup, setUser);
       setOpenForm(false);
       resetForm();
+    } catch (err) {
+      showPopup({ success: false, msg: 'Update failed' });
     } finally {
       setShowLoad({ show: false, msg: '' });
     }
   };
 
   return (
-    <View style={[styles.form, { backgroundColor: colors.appBg }]}>
-      <Text style={[styles.formHead, { color: colors.textPrimary }]}>
-        Edit Profile
-      </Text>
-      <View style={{ gap: 24, width: '90%' }}>
-        <TextInput
-          placeholderTextColor={colors.textSecondary}
-          value={form.name}
-          placeholder="Name"
-          style={[
-            styles.input,
-            { backgroundColor: colors.input, color: colors.textPrimary },
-          ]}
-          onChangeText={text => handleDataChange('name', text)}
-        />
-        <TextInput
-          placeholderTextColor={colors.textSecondary}
-          value={String(form.phone.mobileNo)}
-          placeholder="Mobile No."
-          style={[
-            styles.input,
-            { backgroundColor: colors.input, color: colors.textPrimary },
-          ]}
-          keyboardType="numeric"
-          onChangeText={num => handleDataChange('mobileNo', num)}
-        />
-        <TextInput
-          placeholderTextColor={colors.textSecondary}
-          value={form.language}
-          placeholder="Language"
-          style={[
-            styles.input,
-            { backgroundColor: colors.input, color: colors.textPrimary },
-          ]}
-          onChangeText={text => handleDataChange('language', text)}
-        />
+    <View style={styles.overlay}>
+      <View style={[styles.formCard, { backgroundColor: colors.cardBg }]}>
+        <Text style={[styles.formHead, { color: colors.textPrimary }]}>Edit Profile</Text>
+        
+        <View style={styles.inputGroup}>
+          <Label text="Full Name" />
+          <TextInput
+            placeholderTextColor={colors.textSecondary}
+            value={form.name}
+            style={[styles.input, { backgroundColor: colors.input, color: colors.textPrimary }]}
+            onChangeText={text => handleDataChange('name', text)}
+          />
+
+          <Label text="Mobile Number" />
+          <TextInput
+            placeholderTextColor={colors.textSecondary}
+            value={String(form.phone.mobileNo)}
+            style={[styles.input, { backgroundColor: colors.input, color: colors.textPrimary }]}
+            keyboardType="phone-pad"
+            onChangeText={num => handleDataChange('mobileNo', num)}
+          />
+
+          <Label text="Preferred Language" />
+          <TextInput
+            placeholderTextColor={colors.textSecondary}
+            value={form.language}
+            style={[styles.input, { backgroundColor: colors.input, color: colors.textPrimary }]}
+            onChangeText={text => handleDataChange('language', text)}
+          />
+        </View>
 
         <View style={styles.btnContainer}>
           <TouchableOpacity
-            style={[styles.actionBtn, { backgroundColor: colors.accent }]}
+            style={[styles.actionBtn, { backgroundColor: colors.input }]}
             onPress={() => setOpenForm(false)}
           >
-            <Text style={[styles.actionText, { color: colors.appBg }]}>
-              close
-            </Text>
+            <Text style={[styles.actionText, { color: colors.textSecondary }]}>Cancel</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: colors.primary }]}
-            onPress={() => handleSubmit()}
+            onPress={handleSubmit}
           >
-            <Text style={[styles.actionText, { color: colors.textWhite }]}>
-              Update
-            </Text>
+            <Text style={[styles.actionText, { color: colors.textWhite }]}>Save</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -136,47 +121,59 @@ const ProfileForm = ({ setOpenForm }) => {
 export default ProfileForm;
 
 const styles = StyleSheet.create({
-  form: {
-    width: 330,
-    height: 400,
-    position: 'absolute',
-    top: 120,
-    left: 40,
-    padding: 10,
-    borderRadius: 20,
-    borderWidth: 0.7,
-    borderTopWidth: 0.7,
-    borderBottomWidth: 0.7,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    elevation: 5,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+  },
+  formCard: {
+    width: '85%',
+    maxWidth: 400,
+    padding: 24,
+    borderRadius: 24,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
   },
   formHead: {
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.head.secondary.dark,
+    fontSize: 22,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  inputGroup: {
+    gap: 8,
+  },
+  label: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 14,
+    marginLeft: 4,
+    marginTop: 8,
   },
   input: {
     paddingVertical: 12,
-    paddingLeft: 20,
-    paddingRight: 42,
-    borderRadius: 50,
+    paddingHorizontal: 20,
+    borderRadius: 12,
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
+    fontSize: 16,
   },
   btnContainer: {
-    marginTop: 18,
+    marginTop: 30,
     flexDirection: 'row',
-    justifyContent: 'space-around',
     gap: 12,
   },
   actionBtn: {
-    flex: 0.45,
-    paddingVertical: 12,
+    flex: 1,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
   actionText: {
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
+    fontSize: 16,
   },
 });

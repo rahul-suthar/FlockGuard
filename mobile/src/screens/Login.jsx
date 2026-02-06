@@ -72,13 +72,14 @@ const Login = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={changeLayout} accessible={false}>
       <View style={[styles.container, { backgroundColor: colors.appBg }]}>
         <Animated.View
-          style={{ height: imgHeiAnim, overflow: 'hidden', marginTop: '14%' }}
+          style={{ height: imgHeiAnim, overflow: 'hidden'}}
         >
           <Image
             style={{
-              width: 250,
-              height: 250,
+              width: 140,
+              height: 140,
             }}
+            resizeMode='contain'
             source={require('../assets/images/logo.png')}
           />
         </Animated.View>
@@ -165,14 +166,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    position: 'relative',
-    gap: 40,
+    justifyContent: 'center',
   },
   form: {
     height: '50%',
-    width: 300,
+    width: 340,
     alignItems: 'center',
     gap: 50,
+    paddingTop: 18,
   },
   headText: {
     fontSize: fonts.head.primary,

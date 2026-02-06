@@ -16,7 +16,6 @@ import { useLoader } from '../context/Loader.context.js';
 import { useTheme } from '../context/Theme.context.js';
 import { useEffect, useRef, useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
-import { ScreenStackHeaderRightView } from 'react-native-screens';
 
 const Register = ({ navigation }) => {
   const colors = useTheme();

@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screens/Home.jsx';
 import Details from '../screens/Details.jsx';
@@ -15,7 +14,7 @@ const HomeStackNav = () => {
   const displayName = fName.charAt(0).toUpperCase() + fName.slice(1);
   return (
     <HomeStack.Navigator
-      initialRouteName="Home"
+      initialRouteName="farms"
       screenOptions={{
         headerShown: true,
         headerStyle: {
@@ -33,9 +32,9 @@ const HomeStackNav = () => {
       }}
     >
       <HomeStack.Screen
-        name="Home"
+        name="farms"
         component={Home}
-        options={{ title: `Welcome ${displayName},` }}
+        options={{ headerShown: false }}
       />
       <HomeStack.Screen
         name="Details"
@@ -49,5 +48,3 @@ const HomeStackNav = () => {
 };
 
 export default HomeStackNav;
-
-const styles = StyleSheet.create({});

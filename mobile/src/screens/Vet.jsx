@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fonts } from '../constants/fontSize';
 import { useTheme } from '../context/Theme.context.js';
 import { useEffect, useState } from 'react';
 import VetCard from '../components/VetCard.jsx';
@@ -32,14 +31,6 @@ const vetList = [
   },
   {
     id: 3,
-    check: 'Available',
-    name: 'Akshay Kumar',
-    type: 'pig',
-    location: 'bhopal, madhyapradesh, 390628',
-    img: require('../assets/images/Vet.png'),
-  },
-  {
-    id: 4,
     check: 'Available',
     name: 'Akshay Kumar',
     type: 'pig',
@@ -110,7 +101,7 @@ const Vet = () => {
               contentContainerStyle={{
                 gap: 18,
                 paddingBottom: 72,
-                backgroundColor: colors.appBg,
+                backgroundColor: 'transparent',
               }}
               keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
@@ -130,37 +121,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     alignItems: 'center',
+    paddingTop: 18,
     paddingBottom: 80,
-    // paddingTop: -40,
-    gap: 8,
-  },
-  inputs: {
-    width: 350,
-    paddingVertical: 12,
-    paddingLeft: 20,
-    paddingRight: 42,
-    borderRadius: 50,
-    fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
-    borderWidth: 0.2,
-  },
-  searchbarBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  resetQuery: {
-    position: 'absolute',
-    right: 12,
-  },
-  filterToggles: {
-    flexDirection: 'row',
-    gap: 20,
-    padding: 16,
-  },
-  filters: {
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    borderRadius: 50,
-  },
+    gap: 32,
+  }
 });

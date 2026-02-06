@@ -23,7 +23,7 @@ const SearchBar = ({
           value={searchQuery}
           onChangeText={text => setsearchQuery(text)}
           placeholderTextColor={colors.textSecondary}
-          placeholder="search your farm"
+          placeholder="search"
           style={[
             styles.inputs,
             { backgroundColor: colors.input, color: colors.textPrimary },
@@ -47,15 +47,19 @@ const SearchBar = ({
               styles.filters,
               {
                 backgroundColor:
-                  currFilter === item ? colors.accent : colors.disabled,
+                  currFilter === item ? colors.primary : 'transparent',
                 elevation: currFilter === item ? 4 : 0,
+                borderColor: currFilter === item ? colors.primary : colors.disabled,
+                borderWidth: 2,
               },
             ]}
             onPress={() => setCurrFilter(item)}
           >
             <Text
               style={{
-                color: currFilter === item ? '' : colors.textSecondary,
+                color: currFilter === item ? colors.appBg : colors.textSecondary,
+                fontWeight: 'bold',
+                letterSpacing: 0.5,
               }}
             >
               {item}
@@ -79,15 +83,19 @@ const styles = StyleSheet.create({
     width: 350,
     paddingVertical: 12,
     paddingLeft: 20,
-    paddingRight: 42,
+    paddingRight: 56,
     borderRadius: 50,
     fontFamily: 'Lato-Bold',
     fontSize: fonts.text.primary,
-    borderWidth: 0.2,
+    elevation: 4,
   },
   resetQuery: {
     position: 'absolute',
-    right: 12,
+    right: 0,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50,
   },
   filterToggles: {
     flexDirection: 'row',
@@ -96,7 +104,7 @@ const styles = StyleSheet.create({
   },
   filters: {
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 6,
     borderRadius: 50,
   },
 });

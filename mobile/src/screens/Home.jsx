@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fonts } from '../constants/fontSize';
 import { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FarmInput from '../components/FarmInput.jsx';
@@ -120,6 +119,7 @@ const Home = ({ navigation }) => {
             colors={colors}
           />
         </View>
+
         <View
           style={{
             width: '90%',
@@ -151,7 +151,7 @@ const Home = ({ navigation }) => {
               contentContainerStyle={{
                 gap: 22,
                 paddingBottom: 72,
-                backgroundColor: colors.appBg,
+                backgroundColor: 'transparent',
               }}
               keyExtractor={item => item._id.toString()}
               showsVerticalScrollIndicator={false}
@@ -165,17 +165,16 @@ const Home = ({ navigation }) => {
             <BlurView
               style={StyleSheet.absoluteFill}
               blurType={theme}
-              blurAmount={4}
-              reducedTransparencyFallbackColor="white"
+              blurAmount={2}
             />
             <FarmInput setOpenForm={setOpenForm} setFarms={setFarms} />
           </>
         ) : (
           <TouchableOpacity
-            style={[styles.addBtn, { backgroundColor: colors.accent }]}
+            style={[styles.addBtn, { backgroundColor: colors.primary }]}
             onPress={() => setOpenForm(true)}
           >
-            <Ionicons size={36} name="add" />
+            <Ionicons size={36} name="add" color='white'/>
           </TouchableOpacity>
         )}
       </SafeAreaView>
@@ -190,49 +189,20 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     alignItems: 'center',
+    paddingTop: 18,
     paddingBottom: 80,
-    paddingTop: 8,
-    gap: 8,
-  },
-  inputs: {
-    width: 350,
-    paddingVertical: 12,
-    paddingLeft: 20,
-    paddingRight: 42,
-    borderRadius: 50,
-    fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
-    borderWidth: 0.2,
-  },
-  searchbarBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  resetQuery: {
-    position: 'absolute',
-    right: 12,
-  },
-  filterToggles: {
-    flexDirection: 'row',
-    gap: 20,
-    padding: 16,
-  },
-  filters: {
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    borderRadius: 50,
+    gap: 32,
   },
   addBtn: {
-    width: 56,
-    height: 56,
+    width: 52*1.5,
+    height: 52,
     position: 'absolute',
     right: 18,
     bottom: 14,
-    borderRadius: 15,
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 0.3,
-    elevation: 2,
+    elevation: 0.5,
   },
 });

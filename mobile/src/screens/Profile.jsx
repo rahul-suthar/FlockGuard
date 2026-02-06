@@ -44,64 +44,40 @@ const Profile = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={[styles.root, { backgroundColor: colors.appBg }]}>
-        <View style={[styles.avatarWrap, { backgroundColor: colors.accent }]}>
-          <Text style={[styles.avatarText, { color: colors.textWhite }]}>
-            {user.name ? user.name.charAt(0).toUpperCase() : '?'}
-          </Text>
+        <View style={styles.avatarContainer}>
+          <View style={[styles.avatarWrap, { backgroundColor: colors.accent }]}>
+            <Text style={[styles.avatarText, { color: colors.textWhite }]}>
+              {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+            </Text>
+          </View>
         </View>
 
         <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
           <View style={styles.infoList}>
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-                Name
-              </Text>
-              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-                {user.name}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-                Farms
-              </Text>
-              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-                {farmNo}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-                Phone
-              </Text>
-              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-                {user.phone?.mobileNo || '—'}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-                Email
-              </Text>
-              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-                {user.email || '—'}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-                Language
-              </Text>
-              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-                {user.language || 'en'}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-                Joined
-              </Text>
-              <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
-                {user.createdAt
+            {[
+              { label: 'Name', value: user.name },
+              { label: 'Farms', value: farmNo },
+              { label: 'Phone', value: user.phone?.mobileNo || '—' },
+              { label: 'Email', value: user.email || '—' },
+              { label: 'Language', value: user.language || 'English' },
+              {
+                label: 'Joined',
+                value: user.createdAt
                   ? new Date(user.createdAt).toLocaleDateString('en-GB')
-                  : '—'}
-              </Text>
-            </View>
+                  : '-',
+              },
+            ].map((item, index) => (
+              <View key={index} style={styles.infoRow}>
+                <Text
+                  style={[styles.infoLabel, { color: colors.textSecondary }]}
+                >
+                  {item.label}
+                </Text>
+                <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
+                  {item.value}
+                </Text>
+              </View>
+            ))}
           </View>
 
           <View style={styles.actionRow}>
@@ -128,12 +104,7 @@ const Profile = () => {
         </View>
 
         <View style={styles.footerNote}>
-          <Text
-            style={{
-              color: colors.textSecondary,
-              fontFamily: 'OpenSans-Regular',
-            }}
-          >
+          <Text style={[styles.noteText, { color: colors.textSecondary }]}>
             Manage farms, reports and account settings from here.
           </Text>
         </View>
@@ -141,7 +112,7 @@ const Profile = () => {
         {openform && (
           <>
             <BlurView
-              style={StyleSheet.absoluteFill}
+              style={[StyleSheet.absoluteFill, {zIndex:3}]}
               blurType={theme}
               blurAmount={10}
               reducedTransparencyFallbackColor="white"
@@ -159,65 +130,70 @@ export default Profile;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 28,
+  },
+  avatarContainer: {
+    alignItems: 'center',
+    zIndex: 1,
+    marginBottom: -40,
   },
   avatarWrap: {
-    width: 106,
-    height: 92,
-    borderRadius: 46,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
+    elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    left: '36%',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
   avatarText: {
-    fontSize: 36,
+    fontSize: 42,
     fontFamily: 'Lato-Bold',
   },
   card: {
-    marginTop: -18,
-    borderRadius: 16,
-    padding: 16,
-    elevation: 3,
+    borderRadius: 20,
+    padding: 20,
+    paddingTop: 50,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    overflow: 'hidden',
   },
-
   infoList: {
-    gap: 6,
+    marginBottom: 10,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 6,
-    borderBottomWidth: 0.2,
-    borderBottomColor: 'hsl(0, 0%, 70%)',
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E2E8F0',
   },
   infoLabel: {
     fontFamily: 'OpenSans-Regular',
-    fontSize: fonts.text.primary,
+    fontSize: 15,
   },
   infoValue: {
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
+    fontSize: 15,
+    textAlign: 'right',
+    flex: 1,
+    marginLeft: 20,
   },
-
   actionRow: {
-    marginTop: 18,
+    marginTop: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     gap: 12,
   },
   actionBtn: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
@@ -226,7 +202,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footerNote: {
-    marginTop: 20,
+    marginTop: 30,
     alignItems: 'center',
   },
+  noteText: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 13,
+    lineHeight: 18,
+  }
 });

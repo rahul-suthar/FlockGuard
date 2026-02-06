@@ -5,36 +5,46 @@ import FeatherIcon from 'react-native-vector-icons/Feather.js';
 
 const Card = ({ item, handleDelete, navigation }) => {
   const colors = useTheme();
+  
   return (
     <TouchableOpacity
+      activeOpacity={0.9}
       style={[styles.cardContainer, { backgroundColor: colors.cardBg }]}
       onPress={() => navigation.navigate('Details', { item: item })}
     >
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <View style={{ gap: 14 }}>
-          <Text
-            style={{
-              fontSize: 20,
-              fontFamily: 'Lato-Bold',
-              color: colors.textPrimary,
-            }}
-          >
-            {item.name}
-          </Text>
-          <View style={[styles.info]}>
+      <View style={styles.cardContent}>
+        <View style={styles.mainInfo}>
+          <View style={styles.headerRow}>
+            <Text style={[styles.farmName, { color: colors.textPrimary }]}>
+              {item.name}
+            </Text>
+
+            <View style={[styles.badge, { backgroundColor: colors.appBg }]}>
+              <Text style={styles.badgeText}>
+                {item.type === 'pig' ? '🐷 Swine' : '🐔 Poultry'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.statsRow}>
             <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-              {item.type === 'pig' ? '🐷' : '🐔'} {item.size}
+              Population: <Text style={{ color: colors.textPrimary }}>{item.size}</Text>
             </Text>
           </View>
-          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            📍 {item.location}
-          </Text>
+
+          <View style={styles.locationRow}>
+            <FeatherIcon name="map-pin" size={14} color={colors.textSecondary} />
+            <Text numberOfLines={1} style={[styles.locationText, { color: colors.textSecondary }]}>
+              {item.location}
+            </Text>
+          </View>
         </View>
+
         <TouchableOpacity
-          style={[styles.btn, { backgroundColor: colors.appBg }]}
+          style={[styles.deleteBtn, { backgroundColor : colors.appBg }]}
           onPress={() => handleDelete(item)}
         >
-          <FeatherIcon size={18} name="trash-2" color={colors.error} />
+          <FeatherIcon name="trash-2" size={18} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -45,41 +55,68 @@ export default Card;
 
 const styles = StyleSheet.create({
   cardContainer: {
+    borderRadius: 12,
     elevation: 3,
-    borderWidth: 0.3,
-    borderRadius: 10,
-    shadowRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    marginHorizontal: 2,
+    overflow: 'hidden', 
   },
-  card: {
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    gap: 24,
-  },
-  btn: {
-    paddingVertical: 6,
-    borderRadius: 50,
-    paddingHorizontal: 14,
-    borderWidth: 0.1,
+  cardContent: {
+    padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 0.3,
-    position: 'absolute',
-    top: 12,
-    right: 12,
+    justifyContent: 'space-between',
   },
-  info: {
-    borderRadius: 16,
-    overflow: 'hidden',
+  mainInfo: {
+    flex: 1,
+    gap: 6,
+  },
+  headerRow: {
     flexDirection: 'row',
-    marginTop: 4,
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+  },
+  farmName: {
+    fontSize: 18,
+    fontFamily: 'Lato-Bold',
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontFamily: 'Lato-Bold',
+  },
+  statsRow: {
+    marginBottom: 2,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  locationText: {
+    fontSize: 13,
+    fontFamily: 'Lato-Regular',
+    flex: 1,
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    padding: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+    borderWidth: 0.2,
   },
   infoText: {
-    fontFamily: 'Lato-Bold',
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: 'Lato-Regular',
   },
 });

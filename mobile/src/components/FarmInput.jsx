@@ -28,126 +28,117 @@ const FarmInput = ({ setFarms, setOpenForm }) => {
   const colors = useTheme();
 
   const handleDataChange = (field, text) => {
-    setForm(prev => ({ ...prev, [field]: text }));
-  };
-
-  const updateFarms = async () => {
-    const newFarm = await addFarm(form, showPopup);
-    setFarms(prev => {
-      const updatedFarms = [...prev, newFarm];
-      AsyncStorage.setItem('farms', JSON.stringify(updatedFarms));
-      return updatedFarms;
-    });
+    // Ensure size is always a number or empty string to avoid NaN in TextInput
+    if (field === 'size') {
+      const numericValue = text.replace(/[^0-9]/g, '');
+      setForm(prev => ({ ...prev, [field]: numericValue }));
+    } else {
+      setForm(prev => ({ ...prev, [field]: text }));
+    }
   };
 
   const handleSubmit = async () => {
-    if (!form.name.trim() || !form.location.trim() || !form.type.trim()) {
-      showPopup({
-        success: false,
-        msg: 'All fields are required.',
-      });
+    if (!form.name.trim() || !form.location.trim() || !form.type) {
+      showPopup({ success: false, msg: 'Please complete all fields.' });
       return;
     }
-    if (form.size <= 0) {
-      showPopup({ success: false, msg: 'Size must be greater than 0.' });
+    if (Number(form.size) <= 0) {
+      showPopup({ success: false, msg: 'Population must be at least 1.' });
       return;
     }
-    setShowLoad({ show: true, msg: 'Adding Farm' });
+
+    setShowLoad({ show: true, msg: 'Registering Farm...' });
     try {
-      await updateFarms();
+      const newFarm = await addFarm(form, showPopup);
+      setFarms(prev => {
+        const updatedFarms = [...prev, newFarm];
+        AsyncStorage.setItem('farms', JSON.stringify(updatedFarms));
+        return updatedFarms;
+      });
       setOpenForm(false);
       resetForm();
+    } catch (err) {
+      showPopup({ success: false, msg: 'Failed to add farm.' });
     } finally {
       setShowLoad({ show: false, msg: '' });
     }
   };
 
   return (
-    <View style={[styles.form, { backgroundColor: colors.appBg }]}>
-      <Text style={[styles.formHead, { color: colors.textPrimary }]}>
-        Farm Details
-      </Text>
-      <View style={{ gap: 18, width: '90%' }}>
-        <TextInput
-          placeholderTextColor={colors.textSecondary}
-          value={form.name}
-          placeholder="Name"
-          style={[
-            styles.input,
-            { backgroundColor: colors.input, color: colors.textPrimary },
-          ]}
-          onChangeText={text => handleDataChange('name', text)}
-        />
-        <TextInput
-          placeholderTextColor={colors.textSecondary}
-          value={form.size}
-          placeholder="Size"
-          style={[
-            styles.input,
-            { backgroundColor: colors.input, color: colors.textPrimary },
-          ]}
-          keyboardType="numeric"
-          onChangeText={num => handleDataChange('size', Number(num))}
-        />
-        <TextInput
-          placeholderTextColor={colors.textSecondary}
-          value={form.location}
-          placeholder="Location"
-          style={[
-            styles.input,
-            { backgroundColor: colors.input, color: colors.textPrimary },
-          ]}
-          onChangeText={text => handleDataChange('location', text)}
-        />
+    <View style={styles.overlay}>
+      <View style={[styles.formCard, { backgroundColor: colors.cardBg }]}>
+        <Text style={[styles.formHead, { color: colors.textPrimary }]}>
+          New Farm Details
+        </Text>
 
-        <View style={styles.radioToggle}>
-          {farmOptions.map((type, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.radio,
-                {
-                  backgroundColor:
-                    form.type === type ? colors.accent : colors.disabled,
-                  elevation: form.type === type ? 1 : 0,
-                },
-              ]}
-              onPress={() =>
-                form.type !== type
-                  ? handleDataChange('type', type)
-                  : handleDataChange('type', '')
-              }
-            >
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontFamily: 'Lato-Bold',
-                  textTransform: 'capitalize',
-                  color: form.type === type ? '' :  colors.textSecondary
-                }}
-              >
-                {type}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.inputGroup}>
+          <TextInput
+            placeholder="Farm Name (e.g., Green Valley)"
+            placeholderTextColor={colors.textSecondary}
+            value={form.name}
+            style={[styles.input, { backgroundColor: colors.input, color: colors.textPrimary }]}
+            onChangeText={text => handleDataChange('name', text)}
+          />
+
+          <TextInput
+            placeholder="Population (e.g., 500)"
+            placeholderTextColor={colors.textSecondary}
+            value={String(form.size)}
+            style={[styles.input, { backgroundColor: colors.input, color: colors.textPrimary }]}
+            keyboardType="numeric"
+            onChangeText={num => handleDataChange('size', num)}
+          />
+
+          <TextInput
+            placeholder="Location (City, State)"
+            placeholderTextColor={colors.textSecondary}
+            value={form.location}
+            style={[styles.input, { backgroundColor: colors.input, color: colors.textPrimary }]}
+            onChangeText={text => handleDataChange('location', text)}
+          />
+
+          <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>Select Farm Type</Text>
+          <View style={styles.radioToggle}>
+            {farmOptions.map((type, index) => {
+              const isSelected = form.type === type;
+              return (
+                <TouchableOpacity
+                  key={index}
+                  activeOpacity={0.8}
+                  style={[
+                    styles.radio,
+                    { 
+                      backgroundColor: isSelected ? colors.primary : colors.input,
+                      borderWidth: isSelected ? 0 : 1,
+                      borderColor: colors.disabled
+                    },
+                  ]}
+                  onPress={() => handleDataChange('type', isSelected ? '' : type)}
+                >
+                  <Text style={[
+                    styles.radioText,
+                    { color: isSelected ? colors.textWhite : colors.textSecondary }
+                  ]}>
+                    {type === 'pig' ? '🐷 Swine' : '🐔 Poultry'}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
 
         <View style={styles.btnContainer}>
           <TouchableOpacity
-            style={[styles.btn, { backgroundColor: colors.disabled }]}
+            style={[styles.btn, { backgroundColor: colors.input }]}
             onPress={() => setOpenForm(false)}
           >
-            <Text style={[styles.btnText, { color: colors.textSecondary }]}>
-              close
-            </Text>
+            <Text style={[styles.btnText, { color: colors.textSecondary }]}>Discard</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.btn, { backgroundColor: colors.primary }]}
             onPress={handleSubmit}
           >
-            <Text style={[styles.btnText, { color: colors.textWhite }]}>
-              Add
-            </Text>
+            <Text style={[styles.btnText, { color: colors.textWhite }]}>Register</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -158,56 +149,75 @@ const FarmInput = ({ setFarms, setOpenForm }) => {
 export default FarmInput;
 
 const styles = StyleSheet.create({
-  form: {
-    width: 330,
-    height: 400,
-    position: 'absolute',
-    top: 120,
-    padding: 10,
-    borderRadius: 20,
-    borderWidth: 0.7,
-    borderTopWidth: 0.7,
-    borderBottomWidth: 0.7,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    gap: 16,
-    elevation: 5,
+    zIndex: 20,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  formCard: {
+    width: '88%',
+    padding: 24,
+    borderRadius: 24,
+    elevation: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
   },
   formHead: {
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.head.secondary.dark,
+    fontSize: 22,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  inputGroup: {
+    gap: 14,
   },
   input: {
     paddingVertical: 12,
-    paddingLeft: 20,
-    paddingRight: 42,
-    borderRadius: 50,
+    paddingHorizontal: 20,
+    borderRadius: 12,
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
+    fontSize: 16,
+  },
+  sectionLabel: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 14,
+    marginTop: 8,
+    marginLeft: 4,
+  },
+  radioToggle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  radio: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioText: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 15,
+    textTransform: 'capitalize',
   },
   btnContainer: {
-    marginTop: 12,
+    marginTop: 32,
     flexDirection: 'row',
-    justifyContent: 'space-around',
     gap: 12,
   },
   btn: {
-    flex: 0.45,
-    paddingVertical: 12,
+    flex: 1,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
   btnText: {
     fontFamily: 'Lato-Bold',
-    fontSize: fonts.text.primary,
-  },
-  radio: {
-    paddingVertical: 8,
-    borderRadius: 20,
-    flex: 0.45,
-  },
-  radioToggle: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    fontSize: 16,
   },
 });

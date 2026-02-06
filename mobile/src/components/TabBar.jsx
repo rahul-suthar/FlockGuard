@@ -1,36 +1,28 @@
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/Theme.context';
 import { memo, useEffect, useRef } from 'react';
 
-const TabBarItems = memo(({ iconName, isFocused, onPress, colors }) => {
+const TabBarItems = memo(({ iconName, route, isFocused, onPress, colors }) => {
   const iconColorAnim = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
-  const scaleAnim = useRef(new Animated.Value(isFocused ? 1.3 : 1)).current;
-  const moveAnim = useRef(new Animated.Value(isFocused ? -3 : 0)).current;
 
   const iconColor = iconColorAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.textSecondary, colors.primary],
+    outputRange: [colors.disabled, colors.textPrimary],
   });
 
   const runAnimation = toFocus => {
-    Animated.parallel([
-      Animated.timing(iconColorAnim, {
-        toValue: toFocus ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: toFocus ? 1.3 : 1,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-      Animated.timing(moveAnim, {
-        toValue: toFocus ? -3 : 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-    ]).start(() => {
+    Animated.timing(iconColorAnim, {
+      toValue: toFocus ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start(() => {
       console.log('tab changed with animation');
     });
   };
@@ -46,17 +38,13 @@ const TabBarItems = memo(({ iconName, isFocused, onPress, colors }) => {
       onPress={onPress}
       style={styles.tabContainer}
     >
-      <Animated.View
-        style={[
-          styles.tab,
-          {
-            transform: [{ scale: scaleAnim }, { translateY: moveAnim }],
-          },
-        ]}
-      >
+      <Animated.View style={[styles.tab]}>
         <Animated.Text style={{ color: iconColor }}>
-          <Ionicons name={iconName} size={28} />
+          <Ionicons name={iconName} size={32} />
         </Animated.Text>
+        <Text style={{ fontWeight: isFocused ? 'bold' : '', fontSize: 14, color: colors.textSecondary }}>
+          {route.name}
+        </Text>
       </Animated.View>
     </TouchableOpacity>
   );
@@ -103,10 +91,7 @@ export default TabBar;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 68,
-    paddingBottom: 8,
+    alignItems: 'flex-start',
   },
   tabContainer: {
     flex: 1,
