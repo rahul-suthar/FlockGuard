@@ -33,6 +33,7 @@ const Register = ({ navigation }) => {
   });
   const [shiftLayout, setShiftLayout] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   const shiftAnim = useRef(new Animated.Value(shiftLayout ? 1 : 0)).current;
   const layoutPad = shiftAnim.interpolate({
@@ -67,27 +68,50 @@ const Register = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    const requiredFields = ['name', 'email', 'password'];
+    const { name, email, password, phone } = regForm;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const hasEmpty = requiredFields.some(field => {
-      const value = regForm[field];
-      return !value || value.trim().length === 0;
-    });
-
-    if (hasEmpty) {
+    if (!name.trim() || !email.trim() || !password.trim()) {
       showPopup({ success: false, msg: 'All fields required.' });
       return;
     }
 
-    if (regForm.phone.mobileNo <= 999999999) {
-      showPopup({ success: false, msg: 'Invalid mobile number.' });
+    if (name.trim().length < 2) {
+      showPopup({ success: false, msg: 'Name is too short.' });
       return;
     }
 
-    setShowLoad({ show: true, msg: 'Registering User...' });
+    if (!emailRegex.test(email.trim())) {
+      showPopup({ success: false, msg: 'Invalid email format.' });
+      return;
+    }
+
+    if (password.length < 6) {
+      showPopup({
+        success: false,
+        msg: 'Password must be at least 6 characters.',
+      });
+      return;
+    }
+
+    if (String(phone.mobileNo).length !== 10) {
+      showPopup({ success: false, msg: 'Mobile number must be 10 digits.' });
+      return;
+    }
+
+    if (!agreed) {
+      showPopup({
+        success: false,
+        msg: 'Please agree to the Terms & Conditions.',
+      });
+      return;
+    }
+
+    setShowLoad({ show: true, msg: 'Registering...' });
     try {
       await handleRegister(regForm, showPopup);
       resetRegForm();
+      setAgreed(false);
     } finally {
       setShowLoad({ show: false, msg: '' });
     }
@@ -184,6 +208,34 @@ const Register = ({ navigation }) => {
               onFocus={() => setShiftLayout(true)}
             />
           </View>
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => setAgreed(!agreed)}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.checkbox,
+                {
+                  borderColor: colors.primary,
+                  backgroundColor: agreed ? colors.primary : 'transparent',
+                },
+              ]}
+            >
+              {agreed && (
+                <FontAwesome5 name="check" size={10} color={colors.textWhite} />
+              )}
+            </View>
+            <Text
+              style={[
+                styles.text,
+                { color: colors.textSecondary, fontSize: 13 },
+              ]}
+            >
+              I agree to the{' '}
+              <Text style={{ color: colors.primary }}>Terms & Conditions</Text>
+            </Text>
+          </TouchableOpacity>
           <View style={styles.btns}>
             <TouchableOpacity
               style={[styles.mainBtn, { backgroundColor: colors.primary }]}
@@ -227,7 +279,7 @@ const styles = StyleSheet.create({
   form: {
     width: 300,
     alignItems: 'center',
-    gap: 50,
+    gap: 30,
   },
   headText: {
     fontSize: fonts.head.primary,
@@ -259,7 +311,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   mainText: {
-    fontSize: fonts.btn.primary,
+    fontSize: 28,
     fontFamily: 'Lato-Bold',
   },
   secBtn: {
@@ -273,5 +325,18 @@ const styles = StyleSheet.create({
   secText: {
     fontSize: fonts.text.primary,
     fontFamily: 'Lato-Bold',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

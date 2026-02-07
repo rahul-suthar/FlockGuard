@@ -63,7 +63,7 @@ const Vet = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView
+      <View
         style={[styles.container, { backgroundColor: colors.appBg }]}
       >
         <View>
@@ -109,7 +109,7 @@ const Vet = () => {
             />
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

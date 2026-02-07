@@ -34,7 +34,7 @@ const HomeStackNav = () => {
       <HomeStack.Screen
         name="farms"
         component={Home}
-        options={{ headerShown: false }}
+        options={{ title: `Welcome, ${displayName}` }}
       />
       <HomeStack.Screen
         name="Details"

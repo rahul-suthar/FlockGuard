@@ -43,7 +43,7 @@ const Profile = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.appBg }]}>
+      <View style={[styles.root, { backgroundColor: colors.appBg }]}>
         <View style={styles.avatarContainer}>
           <View style={[styles.avatarWrap, { backgroundColor: colors.accent }]}>
             <Text style={[styles.avatarText, { color: colors.textWhite }]}>
@@ -120,7 +120,7 @@ const Profile = () => {
             <ProfileForm setOpenForm={setOpenForm} />
           </>
         )}
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

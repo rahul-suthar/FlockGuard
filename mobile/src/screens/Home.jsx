@@ -107,7 +107,7 @@ const Home = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView
+      <View
         style={[styles.container, { backgroundColor: colors.appBg }]}
       >
         <View>
@@ -177,7 +177,7 @@ const Home = ({ navigation }) => {
             <Ionicons size={36} name="add" color='white'/>
           </TouchableOpacity>
         )}
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     alignItems: 'center',
-    paddingTop: 18,
+    paddingTop: 24,
     paddingBottom: 80,
     gap: 32,
   },

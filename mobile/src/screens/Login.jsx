@@ -49,20 +49,30 @@ const Login = ({ navigation }) => {
     setLogForm(prev => ({ ...prev, [field]: text }));
   };
 
-  const handleSubmit = async () => {
-    if (!logForm.email.trim() || !logForm.password.trim()) {
-      showPopup({ success: false, msg: 'All fields required.' });
-      return;
-    }
-    setShowLoad({ show: true, msg: 'Logging In...' });
-    try {
-      await handleLogin(logForm, setUser, showPopup);
-      resetLogForm();
-    } finally {
-      setShowLoad({ show: false, msg: '' });
-    }
-  };
+ const handleSubmit = async () => {
+  if (!logForm.email.trim() || !logForm.password.trim()) {
+    showPopup({ success: false, msg: 'Please enter both email and password.' });
+    return;
+  }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(logForm.email.trim())) {
+    showPopup({ 
+      success: false, 
+      msg: 'Please enter a valid email address.' 
+    });
+    return;
+  }
+
+  setShowLoad({ show: true, msg: 'Logging In...' });
+  try {
+    await handleLogin(logForm, setUser, showPopup);
+    resetLogForm();
+  } catch (error) {
+  } finally {
+    setShowLoad({ show: false, msg: '' });
+  }
+};
   const changeLayout = () => {
     Keyboard.dismiss();
     setShowImg(true);
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   mainText: {
-    fontSize: fonts.btn.primary,
+    fontSize: 28,
     fontFamily: 'Lato-Bold',
   },
   secBtn: {
