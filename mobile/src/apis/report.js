@@ -1,53 +1,34 @@
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FARM_API_URL } from '@env';
+import api from './api';
 
 const fetchReports = async farmId => {
   try {
-    const token = await AsyncStorage.getItem('accessToken');
-    const res = await axios.get(`${FARM_API_URL}/${farmId}/reports`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await api.get(`/${farmId}/reports`);
     return res.data.data.docs;
   } catch (err) {
-    console.error('Failed to fetch farms:', err);
-    showPopup({ success: false, msg: 'failed to fetch Farms' });
+    console.error('Fetch error:', err.message);
     return [];
   }
 };
 
 const createReport = async (farmId, photoPath) => {
   const formData = new FormData();
+
   formData.append('symptomsImg', {
     uri: photoPath,
     type: 'image/jpeg',
-    fileName: 'symptoms.jpg',
+    name: 'symptoms.jpg',
   });
 
-  console.log(formData);
-  console.log(photoPath);
-  console.log(farmId);
-
   try {
-    const token = await AsyncStorage.getItem('accessToken');
-    const res = await axios.post(
-      `${FARM_API_URL}/${farmId}/reports`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        transformRequest: x => x,
+    const res = await api.post(`/${farmId}/reports`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
-    );
-    console.log(res);
-
+    });
     return res.data.data;
   } catch (err) {
-    console.log(err);
-    console.error('Upload error:', err.response?.data || err.message);
+    console.log('Error Source:', err.response?.headers['server'] || 'Unknown');
+    console.log('Error Data:', err.response?.data);
     throw err;
   }
 };

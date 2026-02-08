@@ -123,7 +123,8 @@ export default ProfileForm;
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    paddingTop: 26,
     alignItems: 'center',
     zIndex: 10,
     backgroundColor: 'rgba(0,0,0,0.1)',

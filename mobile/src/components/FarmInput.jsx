@@ -151,7 +151,7 @@ export default FarmInput;
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
+    paddingTop: 26,
     alignItems: 'center',
     zIndex: 20,
     backgroundColor: 'rgba(0,0,0,0.2)',

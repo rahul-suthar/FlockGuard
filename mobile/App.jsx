@@ -18,6 +18,7 @@ import Popup from './src/components/Popup.jsx';
 import GlobalLoader from './src/components/Loader.jsx';
 import CameraView from './src/components/CameraView.jsx';
 import { CameraProvier, useCamera } from './src/context/Camera.context.js';
+import { HealthProvider } from './src/context/Health.context.js';
 
 const MainApp = () => {
   const { user, setUser } = useAuth();
@@ -64,9 +65,11 @@ const App = () => {
       <PopupProvider>
         <AuthProvider>
           <LoaderProvider>
-            <CameraProvier>
-              <MainApp />
-            </CameraProvier>
+            <HealthProvider>
+              <CameraProvier>
+                <MainApp />
+              </CameraProvier>
+            </HealthProvider>
           </LoaderProvider>
         </AuthProvider>
       </PopupProvider>

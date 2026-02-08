@@ -3,12 +3,13 @@ import Profile from '../screens/Profile.jsx';
 import TabBar from '../components/TabBar.jsx';
 import Vet from '../screens/Vet.jsx';
 import HomeStackNav from './HomeStackNav.jsx';
-import { colors } from '../constants/colors.js';
+import { useTheme } from '../context/Theme.context.js';
 import { fonts } from '../constants/fontSize.js';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const colors = useTheme();
   return (
     <Tab.Navigator
       initialRouteName="Home"

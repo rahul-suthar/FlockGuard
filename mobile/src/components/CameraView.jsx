@@ -9,6 +9,7 @@ import {
   Camera,
   useCameraDevice,
   useCameraPermission,
+  useCameraFormat,
 } from 'react-native-vision-camera';
 import { useEffect, useRef, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +22,8 @@ const CameraView = ({ onPhotoTaken, onClose }) => {
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
 
+  const format = useCameraFormat(device, [{photoResolution: {width: 1280, height: 720}}])
+
   useEffect(() => {
     if (hasPermission === 'not-determined' || 'denied') {
       requestPermission();
@@ -30,7 +33,7 @@ const CameraView = ({ onPhotoTaken, onClose }) => {
   const capturePicture = async () => {
     if (camera.current) {
       try {
-        const photo = await camera.current.takePhoto({ flash });
+        const photo = await camera.current.takeSnapshot({ flash, quality: 85 });
         if (onPhotoTaken) {
           onPhotoTaken(photo);
         }
@@ -85,6 +88,7 @@ const CameraView = ({ onPhotoTaken, onClose }) => {
         device={device}
         isActive={true}
         photo={true}
+        format={format}
       />
       <TouchableOpacity style={styles.captureBtn} onPress={capturePicture}>
         <Ionicons size={36} name="camera" />
